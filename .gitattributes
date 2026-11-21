@@ -1,0 +1,7 @@
+# Keep line endings stable for a static site served from Linux.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.webp binary
+*.woff2 binary
+*.mp4 binary

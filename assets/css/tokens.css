@@ -1,0 +1,123 @@
+/* ==========================================================================
+   Flow design tokens
+   Values come from Flow's own code (prompt §3.1). Everything else in the CSS
+   refers to these names, so a colour change happens in one place.
+
+   Theming works through `color-scheme` + `light-dark()`:
+   - :root follows the visitor's OS preference (or the footer toggle, which
+     sets data-theme="light" | "dark" on <html>);
+   - midnight sections force `color-scheme: dark`, so every light-dark() token
+     inside them resolves to its dark value automatically.
+   ========================================================================== */
+
+:root {
+  color-scheme: light dark;
+
+  /* ---- Grounds ---------------------------------------------------------- */
+  --ivory: #F6F2EA;
+  --midnight: #0A0B0F;
+  --charcoal: #121214;            /* ivory sections under a dark preference */
+
+  /* ---- Accent (indigo is the only accent) ------------------------------- */
+  --indigo-day: #4F46E5;
+  --indigo-night: #818CF8;
+
+  /* ---- Mode colours (light / dark) -------------------------------------- */
+  --chat-day: #963A30;      --chat-night: #F2A08F;
+  --code-day: #82417A;      --code-night: #D9A0CD;
+  --research-day: #7A520E;  --research-night: #E8B860;
+  --success-day: #1F674A;   --success-night: #57BA8B;
+  --danger-day: #943D44;    --danger-night: #F1848C;
+
+  /* ---- Page text --------------------------------------------------------- */
+  --ink-day: #18191C;        --ink-soft-day: #6B6760;
+  --ink-night: #F4F4F6;      --ink-soft-night: #A9ABB3;
+
+  /* ---- Scheme-aware page tokens (resolve per section) ------------------- */
+  --ground: light-dark(var(--ivory), var(--charcoal));
+  --text: light-dark(var(--ink-day), var(--ink-night));
+  --text-soft: light-dark(var(--ink-soft-day), var(--ink-soft-night));
+  --accent: light-dark(var(--indigo-day), var(--indigo-night));
+  --accent-contrast: light-dark(#FFFFFF, #0A0B0F);
+  --hairline: light-dark(rgb(0 0 0 / 8%), rgb(255 255 255 / 8%));
+  --hairline-strong: light-dark(rgb(0 0 0 / 14%), rgb(255 255 255 / 14%));
+  --card: light-dark(rgb(255 255 255 / 55%), rgb(255 255 255 / 3.5%));
+  --glow: light-dark(rgb(99 102 241 / 11%), rgb(99 102 241 / 30%));
+
+  --chat: light-dark(var(--chat-day), var(--chat-night));
+  --code: light-dark(var(--code-day), var(--code-night));
+  --research: light-dark(var(--research-day), var(--research-night));
+  --success: light-dark(var(--success-day), var(--success-night));
+  --danger: light-dark(var(--danger-day), var(--danger-night));
+
+  /* ---- App theme (used by the rebuilt UI demos) -------------------------- */
+  --app-ground:  light-dark(#F4F4F2, #111214);
+  --app-surface: light-dark(#FBFBFA, #17181B);
+  --app-raised:  light-dark(#FFFFFF, #1D1F23);
+  --app-subtle:  light-dark(#EEEEEB, #222429);
+  --app-line:    light-dark(#D8D8D3, #2D3036);
+  --app-text:    light-dark(#202124, #ECECEF);
+  --app-soft:    light-dark(#606168, #B0B2B8);
+  --code-block: #16171B;          /* code blocks are dark in both themes */
+
+  /* ---- Shapes ----------------------------------------------------------- */
+  --r-window: 16px;
+  --r-card: 14px;
+  --r-composer: 20px;
+  --r-pill: 999px;
+
+  /* ---- Window shadow ----------------------------------------------------
+     Same geometry everywhere; on dark grounds each layer is denser so the
+     window still lifts off the midnight canvas. (light-dark() takes colours,
+     not whole shadow lists, hence one per layer.) */
+  --shadow-window:
+    0 2px 4px light-dark(rgb(20 20 40 / 4%), rgb(0 0 0 / 40%)),
+    0 30px 60px -18px light-dark(rgb(40 36 70 / 22%), rgb(0 0 0 / 62%)),
+    0 80px 140px -40px light-dark(rgb(40 36 70 / 30%), rgb(32 28 96 / 55%));
+
+  /* ---- Type ------------------------------------------------------------- */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --fs-hero: clamp(3.25rem, 8.2vw, 8.75rem);
+  --fs-section: clamp(2.75rem, 6.4vw, 7rem);
+  --fs-sub: clamp(1.25rem, 2.1vw, 1.875rem);
+  --fs-body: 1.0625rem;
+  --fs-eyebrow: 0.8125rem;
+  --fs-small: 0.875rem;
+
+  /* ---- Spacing (4 px base) ---------------------------------------------- */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px; --s-5: 24px;
+  --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px; --s-10: 128px;
+
+  /* ---- Layout ----------------------------------------------------------- */
+  --max: 1200px;
+  --gutter: clamp(20px, 5vw, 64px);
+  --section-pad: clamp(96px, 14vw, 200px);
+  --nav-h: 64px;
+
+  /* ---- Motion ----------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);   /* entrances */
+  --ease-move: cubic-bezier(0.65, 0, 0.35, 1);  /* moves */
+  /* ζ 0.66, ~6 % overshoot — use with 0.8–1.0 s */
+  --spring: linear(0, 0.0304, 0.1076, 0.2135, 0.3338, 0.4572, 0.5757, 0.6841, 0.779, 0.8589, 0.9236, 0.9738, 1.0108, 1.0365, 1.0525, 1.0609, 1.0633, 1.0614, 1.0565, 1.0498, 1.0422, 1.0344, 1.0269, 1.02, 1.014, 1.0089, 1.0048, 1.0017, 0.9993, 0.9977, 0.9967, 0.9961, 0.996, 0.9961, 0.9964, 0.9968, 0.9973, 0.9978, 0.9983, 0.9987, 1);
+  /* ζ 0.8 */
+  --spring-soft: linear(0, 0.0207, 0.0737, 0.1476, 0.2333, 0.324, 0.4147, 0.5019, 0.5831, 0.657, 0.7228, 0.7802, 0.8295, 0.8711, 0.9056, 0.9337, 0.9562, 0.9739, 0.9874, 0.9975, 1.0047, 1.0097, 1.0128, 1.0145, 1.0151, 1.015, 1.0143, 1.0133, 1.012, 1.0106, 1.0093, 1.0079, 1.0067, 1.0055, 1.0045, 1.0036, 1.0028, 1.0021, 1.0016, 1.0011, 1);
+}
+
+/* Browsers without linear() easing fall back to the plain entrance curve. */
+@supports not (transition-timing-function: linear(0, 1)) {
+  :root {
+    --spring: var(--ease-out);
+    --spring-soft: var(--ease-out);
+  }
+}
+
+/* The footer toggle overrides the OS preference. */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"]  { color-scheme: dark; }
+
+/* Midnight sections are dark in every theme. */
+.on-midnight { color-scheme: dark; }
+/* Ivory sections follow the page scheme; the class exists for readability. */
+.on-ivory { color-scheme: inherit; }
