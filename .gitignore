@@ -1,0 +1,19 @@
+﻿# Source assets: never published, never committed.
+_raw/
+
+# The original build brief. Kept locally; not part of the published site.
+prompt.md
+
+# QA output (screenshots, Lighthouse reports) is regenerated on demand.
+tools/qa/*.png
+tools/qa/*.json
+tools/qa/*.html
+tools/qa/out/
+
+# Local knowledge graph.
+graphify-out/
+
+# Python / OS / editor noise
+__pycache__/
+Thumbs.db
+.DS_Store

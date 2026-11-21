@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Flow">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#4338ca"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#tile)"/>
+  <path d="M120 184C170.32 136 205.68 136 256 184S341.68 232 392 184" fill="none" stroke="#c7d2fe" stroke-width="34" stroke-linecap="round"/>
+  <path d="M120 256C170.32 208 205.68 208 256 256S341.68 304 392 256" fill="none" stroke="#ffffff" stroke-width="34" stroke-linecap="round"/>
+  <path d="M120 328C170.32 280 205.68 280 256 328S341.68 376 392 328" fill="none" stroke="#a5b4fc" stroke-width="34" stroke-linecap="round"/>
+</svg>
