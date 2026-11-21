@@ -1,0 +1,15 @@
+{
+  "name": "Flow",
+  "short_name": "Flow",
+  "description": "Your AI workspace, on your computer.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "browser",
+  "background_color": "#F6F2EA",
+  "theme_color": "#F6F2EA",
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/icons/flow-icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

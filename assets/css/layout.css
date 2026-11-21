@@ -1,0 +1,295 @@
+/* ==========================================================================
+   Layout: the ground layer, containers, section rhythm, the nav, window
+   frames and the tilt / parallax that windows get as they enter.
+   ========================================================================== */
+
+/* The icon sprite must stay rendered (not display:none) or its gradient
+   disappears in some browsers, so it is just collapsed to nothing. */
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* ---- Ground ---------------------------------------------------------------
+   Without JS every section paints its own background. Once main.js boots,
+   sections go transparent and one fixed layer glides between grounds. */
+.on-ivory    { background-color: var(--ground); }
+.on-midnight { background-color: var(--midnight); color: var(--text); }
+
+.ground {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--ground);
+  transition: background-color 600ms var(--ease-move);
+  pointer-events: none;
+}
+.ground[data-ground="midnight"] { background-color: var(--midnight); }
+
+.booted .on-ivory,
+.booted .on-midnight { background-color: transparent; }
+
+.scroll-sentinel { position: absolute; top: 24px; left: 0; width: 1px; height: 1px; pointer-events: none; }
+
+/* ---- Containers ------------------------------------------------------------ */
+.container {
+  width: min(100% - 2 * var(--gutter), var(--max));
+  margin-inline: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--s-5);
+}
+
+/* ---- Sections -------------------------------------------------------------- */
+.section {
+  position: relative;
+  isolation: isolate;
+  padding-block: var(--section-pad);
+}
+
+/* Faint indigo glow: at the top of ivory sections, the bottom of midnight. */
+.section::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  z-index: -1;
+  height: min(70vh, 720px);
+  pointer-events: none;
+}
+.on-ivory.section::before {
+  top: 0;
+  background: radial-gradient(60% 100% at 50% 0%, var(--glow), transparent 72%);
+}
+.on-midnight.section::before {
+  bottom: 0;
+  background: radial-gradient(60% 100% at 50% 100%, var(--glow), transparent 72%);
+}
+
+/* Consecutive sections on the same ground share one long glow. */
+.on-ivory + .on-ivory.section::before,
+.on-midnight + .on-midnight.section::before { opacity: 0.6; }
+
+/* Section heads: one centred column of copy above the visual. */
+.feature__head {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: var(--s-5);
+}
+.feature__sub { max-inline-size: 24em; color: var(--text); }
+.feature__body { text-align: center; }
+.feature__visual { margin-top: clamp(56px, 8vw, 112px); }
+
+.eyebrow--mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--mode);
+}
+.eyebrow--mode::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ---- Nav ------------------------------------------------------------------- */
+.nav {
+  --nav-bg: var(--ground);
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 50;
+  height: var(--nav-h);
+  color: var(--text);
+}
+/* Over a midnight section the whole nav switches scheme, so every token in it
+   (text, accent, button) resolves to its dark value. */
+.nav[data-over="midnight"] { color-scheme: dark; --nav-bg: var(--midnight); }
+
+/* The translucent bar is its own layer, so becoming "scrolled" only fades
+   opacity instead of animating colours. */
+.nav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: color-mix(in srgb, var(--nav-bg) 72%, transparent);
+  border-bottom: 1px solid var(--hairline);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  opacity: 0;
+  transition: opacity 400ms var(--ease-move);
+}
+.nav.is-scrolled::before { opacity: 1; }
+
+.nav__inner {
+  width: min(100% - 2 * var(--gutter), var(--max));
+  height: 100%;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--s-5);
+}
+
+.lockup {
+  --icon: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--icon) * 0.24);
+  text-decoration: none;
+  color: var(--text);
+}
+.lockup__icon { width: var(--icon); height: var(--icon); flex: none; }
+.lockup__word {
+  font-weight: 650;
+  font-size: calc(var(--icon) * 0.84);
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+.nav__brand { justify-self: start; }
+
+.nav__links { display: flex; gap: 4px; }
+.nav__links a {
+  position: relative;
+  padding: 8px 12px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  color: var(--text-soft);
+  text-decoration: none;
+}
+.nav__links a:hover { color: var(--text); }
+.nav__links a[aria-current="true"] { color: var(--text); }
+.nav__links a::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 300ms var(--ease-out), transform 400ms var(--spring);
+}
+.nav__links a[aria-current="true"]::after { opacity: 1; transform: none; }
+
+.nav__end { justify-self: end; display: flex; align-items: center; gap: var(--s-2); }
+
+.nav__menu {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-pill);
+  place-items: center;
+  color: var(--text);
+}
+.nav__menu:hover { background: var(--hairline); }
+
+@media (max-width: 819px) {
+  .nav__inner { grid-template-columns: 1fr auto; }
+  .nav__links { display: none; }
+  .js .nav__menu { display: grid; }
+}
+
+/* ---- Mobile sheet ---------------------------------------------------------- */
+.sheet {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0 var(--gutter) var(--s-8);
+  border: 0;
+  background: var(--ground);
+  color: var(--text);
+}
+.sheet::backdrop { background: transparent; }
+.sheet[open] { display: flex; flex-direction: column; animation: sheet-in 500ms var(--ease-out); }
+@keyframes sheet-in { from { opacity: 0; transform: translateY(-12px); } }
+
+.sheet__top {
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sheet__close { width: 40px; height: 40px; border-radius: var(--r-pill); display: grid; place-items: center; }
+.sheet__close:hover { background: var(--hairline); }
+.sheet__links { display: grid; gap: var(--s-2); margin-top: var(--s-7); }
+.sheet__links a {
+  font-size: clamp(2rem, 9vw, 2.75rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+  text-decoration: none;
+}
+.sheet[open] .sheet__links a { animation: soft-rise 700ms var(--ease-out) both; }
+.sheet[open] .sheet__links a:nth-child(2) { animation-delay: 50ms; }
+.sheet[open] .sheet__links a:nth-child(3) { animation-delay: 100ms; }
+.sheet[open] .sheet__links a:nth-child(4) { animation-delay: 150ms; }
+.sheet[open] .sheet__links a:nth-child(5) { animation-delay: 200ms; }
+
+/* ---- Window frame -----------------------------------------------------------
+   Product UI sits in a "window": 16 px radius, a 1 px hairline, and a large
+   soft layered shadow (denser on dark grounds, see --shadow-window). */
+.window {
+  position: relative;
+  border-radius: var(--r-window);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--shadow-window);
+  background: var(--app-ground);
+  overflow: hidden;
+}
+.window img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ---- Tilt and parallax ------------------------------------------------------
+   Windows enter with a slight 3D tilt that settles flat as you scroll, and
+   drift by at most 40 px. Where the browser supports scroll-driven
+   animations this is pure CSS; otherwise main.js sets the same variables. */
+.parallax { will-change: transform; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .booted .tilt {
+    transform-origin: 50% 0%;
+    transform: perspective(1800px) rotateX(calc(var(--tilt, 0) * 10deg));
+    transition: transform 1.2s var(--spring-soft);
+  }
+  .booted .parallax { transform: translateY(calc(var(--drift, 0) * 20px)); }
+
+  /* Fallback path (no scroll timelines): main.js toggles .is-flat. */
+  .booted .tilt:not(.is-flat) { --tilt: 1; }
+
+  @supports (animation-timeline: view()) {
+    .booted .tilt {
+      transition: none;
+      animation: tilt-settle linear both;
+      animation-timing-function: var(--spring-soft);
+      animation-timeline: view();
+      animation-range: entry 0% cover 38%;
+    }
+    .booted .parallax {
+      animation: drift linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+  }
+}
+
+@keyframes tilt-settle {
+  from { transform: perspective(1800px) rotateX(10deg); }
+  to   { transform: perspective(1800px) rotateX(0deg); }
+}
+@keyframes drift {
+  from { transform: translateY(20px); }
+  to   { transform: translateY(-20px); }
+}
+
+/* Reduced motion: no tilt, no parallax, nothing tied to scroll. */
+@media (prefers-reduced-motion: reduce) {
+  .tilt, .parallax { animation: none !important; transform: none !important; }
+}

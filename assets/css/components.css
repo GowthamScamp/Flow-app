@@ -1,0 +1,405 @@
+/* ==========================================================================
+   Components: buttons, pills, chips and the app-UI pieces the demos share.
+   ========================================================================== */
+
+/* ---- Buttons ---------------------------------------------------------------- */
+.btn {
+  --h: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--h);
+  padding: 0 20px;
+  border-radius: var(--r-pill);
+  border: 1px solid transparent;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    transform 400ms var(--ease-out),
+    filter 400ms var(--ease-out),
+    opacity 300ms var(--ease-out);
+}
+.btn svg { flex: none; }
+.btn--large { --h: 52px; padding: 0 26px; font-size: 1rem; }
+.btn--small { --h: 34px; padding: 0 14px; font-size: 0.875rem; }
+
+.btn--primary { background: var(--accent); color: var(--accent-contrast); }
+.btn--primary:hover { transform: translateY(-1px); filter: brightness(1.08); }
+.btn--primary:active { transform: translateY(0); filter: brightness(0.96); }
+
+
+/* "Coming soon": a calm, clearly inactive state, never a broken link. */
+.btn--soon {
+  border: 1px dashed var(--hairline-strong);
+  color: var(--text-soft);
+  background: transparent;
+  cursor: default;
+  font-weight: 500;
+}
+.soon { color: var(--text-soft); font-style: normal; }
+
+.arrow-link {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+.arrow-link span { display: inline-block; transition: transform 400ms var(--ease-out); }
+.arrow-link:hover span { transform: translateX(4px); }
+
+/* ---- Demo wrapper ------------------------------------------------------------
+   With JavaScript the rebuilt demo shows; without it, the static screenshot. */
+.demo { position: relative; }
+.demo__fallback { display: block; }
+.demo__fallback img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-window);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--shadow-window);
+}
+.js .demo__fallback { display: none; }
+html:not(.js) .demo > .parallax { display: none; }
+
+/* Off-screen or in a hidden tab, a demo freezes, CSS loops included. */
+.demo.is-paused *,
+.demo.is-paused *::before,
+.demo.is-paused *::after { animation-play-state: paused !important; }
+
+.replay {
+  position: absolute;
+  right: 0;
+  bottom: -60px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--hairline-strong);
+  color: var(--text-soft);
+  background: color-mix(in srgb, var(--ground) 60%, transparent);
+  transition: transform 500ms var(--spring);
+}
+.on-midnight .replay { background: color-mix(in srgb, var(--midnight) 60%, transparent); }
+.replay:hover { color: var(--text); transform: rotate(-30deg); }
+.replay:not([hidden]) { animation: soft-rise 600ms var(--ease-out) both; }
+
+.caption {
+  margin-top: var(--s-5);
+  font-size: var(--fs-small);
+  color: var(--text-soft);
+  text-align: center;
+}
+
+/* ---- App UI primitives (rebuilt from Flow's screenshots) --------------------- */
+.app {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--app-text);
+  background: var(--app-ground);
+  text-align: left;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.app kbd {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 1px 6px;
+  border: 1px solid var(--app-line);
+  border-radius: 5px;
+  color: var(--app-soft);
+  background: var(--app-raised);
+}
+
+.app-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 46px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--app-line);
+  background: var(--app-surface);
+  color: var(--app-soft);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.app-bar__spacer { flex: 1; }
+.app-bar__icon { color: var(--app-soft); }
+.app-bar__project { color: var(--app-text); font-weight: 650; font-size: 14px; }
+.app-bar__branch { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-mono); font-size: 12px; }
+.app-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 6px 0 10px;
+  border: 1px solid var(--app-line);
+  border-radius: 8px;
+  background: var(--app-raised);
+}
+
+/* Mode pills: the mode colour on a tint of itself. */
+.pill {
+  --pill: var(--app-soft);
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--pill) 40%, transparent);
+  background: color-mix(in srgb, var(--pill) 11%, var(--app-surface));
+  color: var(--pill);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  font-style: normal;
+}
+.pill--chat { --pill: var(--chat); }
+.pill--code { --pill: var(--code); }
+.pill--research { --pill: var(--research); }
+.pill--tiny { height: 18px; padding: 0 5px; font-size: 10px; }
+
+/* Sidebar (shown only when the demo is wide enough). */
+.app-side {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  width: 224px;
+  flex: none;
+  padding: 14px 12px;
+  border-right: 1px solid var(--app-line);
+  background: var(--app-surface);
+  font-size: 13px;
+  color: var(--app-soft);
+}
+.app-side__brand { display: flex; align-items: center; gap: 8px; color: var(--app-text); font-size: 15px; padding: 2px 4px 4px; }
+.app-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--app-subtle);
+  font-size: 12.5px;
+}
+.app-tabs span { flex: 1; text-align: center; padding: 4px 0; border-radius: 7px; }
+.app-tabs .is-on { background: var(--app-raised); color: var(--app-text); font-weight: 600; box-shadow: 0 1px 2px rgb(0 0 0 / 6%); }
+.app-tabs__home { flex: 0 0 28px !important; }
+.app-side__new, .app-side__search {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--app-line);
+  border-radius: 9px;
+  background: var(--app-raised);
+  color: var(--app-text);
+}
+.app-side__search { justify-content: flex-start; color: var(--app-soft); background: transparent; }
+.app-side__label { margin-top: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+.app-side__day { font-size: 12px; }
+.app-side__item { display: grid; gap: 4px; padding: 8px 10px; border-radius: 9px; }
+.app-side__item b { color: var(--app-text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-side__item span { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.app-side__item.is-on { background: color-mix(in srgb, var(--indigo-day) 12%, var(--app-surface)); box-shadow: inset 2px 0 0 var(--accent); }
+
+/* The user's message bubble, with Flow's indigo left edge. */
+.bubble {
+  padding: 11px 16px;
+  border-radius: 4px 10px 10px 4px;
+  border-left: 3px solid var(--indigo-day);
+  background: var(--app-subtle);
+  color: var(--app-text);
+  font-size: 14.5px;
+}
+
+/* Thought card: the model's reasoning, kept apart from the answer. */
+.thought {
+  border: 1px solid var(--app-line);
+  border-radius: 10px;
+  background: var(--app-surface);
+  overflow: hidden;
+}
+.thought__head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 40px;
+  padding: 0 14px;
+  color: var(--app-text);
+  font-weight: 500;
+  font-size: 13.5px;
+}
+.thought__icon { color: var(--app-soft); }
+.thought__chev {
+  margin-left: auto;
+  color: var(--app-soft);
+  transform: rotate(90deg);
+  transition: transform 500ms var(--ease-move);
+}
+.thought.is-collapsed .thought__chev { transform: rotate(0deg); }
+.thought__body {
+  display: grid;
+  gap: 2px;
+  padding: 10px 16px 14px 40px;
+  border-top: 1px solid var(--app-line);
+  font-size: 13px;
+  color: var(--app-soft);
+}
+.thought__meta { display: flex; align-items: center; gap: 8px; margin-left: -24px; color: var(--app-soft); }
+.thought__meta span { font-size: 12px; }
+.thought.is-collapsed .thought__body { display: none; }
+
+/* "Thinking" shimmers softly while the model reasons. */
+.thought.is-thinking .thought__label {
+  background: linear-gradient(90deg, var(--app-soft) 0%, var(--app-soft) 35%, var(--app-text) 50%, var(--app-soft) 65%, var(--app-soft) 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 1.8s linear infinite;
+}
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: -150% 0; } }
+
+/* The answer: headings, lists, code blocks and tables. */
+.answer { display: grid; gap: 12px; font-size: 14.5px; line-height: 1.62; color: var(--app-text); }
+.answer h4 { font-size: 17px; font-weight: 650; letter-spacing: -0.01em; margin-top: 6px; }
+.answer ol { margin: 0; padding-left: 22px; display: grid; gap: 4px; }
+.answer li::marker { color: var(--app-soft); }
+.answer strong { font-weight: 650; }
+
+.codeblock {
+  border-radius: 10px;
+  background: var(--code-block);
+  border: 1px solid #23252B;
+  overflow: hidden;
+}
+.codeblock__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 34px;
+  padding: 0 8px 0 14px;
+  border-bottom: 1px solid #23252B;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #878B97;
+}
+.codeblock__tools { display: flex; gap: 4px; }
+.codeblock__tools span { padding: 2px 7px; border-radius: 5px; background: #25282D; color: #B8BCC6; font-size: 11px; }
+.codeblock__code {
+  padding: 12px 16px 14px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.68;
+  color: #E1E4E8;
+  overflow: hidden;
+}
+.ln { display: block; white-space: pre; }
+/* Syntax colours sampled from Flow's code blocks. */
+.codeblock .k { color: #F97583; }
+.codeblock .f { color: #B392F0; }
+.codeblock .b { color: #79B8FF; }
+.codeblock .c { color: #6A737D; }
+
+.answer__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  border: 1px solid var(--app-line);
+}
+.answer__table th, .answer__table td { padding: 7px 10px; border: 1px solid var(--app-line); text-align: left; }
+.answer__table th { background: var(--app-subtle); font-weight: 600; }
+
+/* Composer */
+.composer {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  padding: 12px 12px 10px 16px;
+  border: 1px solid var(--app-line);
+  border-radius: var(--r-composer);
+  background: var(--app-raised);
+  box-shadow: 0 6px 20px -12px rgb(20 20 40 / 18%);
+}
+/* Indigo focus ring as an overlay that fades in. */
+.composer::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  border: 1px solid var(--indigo-day);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--indigo-day) 22%, transparent);
+  opacity: 0;
+  transition: opacity 300ms var(--ease-out);
+  pointer-events: none;
+}
+.composer.is-focused::after { opacity: 1; }
+.composer__field { position: relative; min-height: 22px; font-size: 14.5px; color: var(--app-text); }
+.composer__placeholder { position: absolute; inset: 0 auto auto 0; color: var(--app-soft); opacity: 0.8; }
+.composer.has-text .composer__placeholder { display: none; }
+.caret {
+  display: inline-block;
+  width: 1.5px;
+  height: 1.15em;
+  margin-left: 1px;
+  vertical-align: -0.2em;
+  background: var(--indigo-day);
+  opacity: 0;
+}
+.composer.is-focused .caret { animation: blink 1.05s steps(1, end) infinite; }
+@keyframes blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+
+.composer__row { display: flex; align-items: center; gap: 8px; }
+.composer__spacer { flex: 1; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--app-line);
+  border-radius: var(--r-pill);
+  color: var(--app-text);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.chip--icon { width: 30px; padding: 0; justify-content: center; border-color: transparent; font-size: 18px; color: var(--app-soft); }
+.chip--on {
+  border-color: color-mix(in srgb, var(--indigo-day) 45%, transparent);
+  background: color-mix(in srgb, var(--indigo-day) 11%, var(--app-raised));
+  color: light-dark(#413BAB, #A5B4FC);
+}
+.model-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--app-soft);
+  white-space: nowrap;
+}
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--indigo-day); flex: none; }
+.send {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--app-subtle);
+  color: var(--app-soft);
+  transition: transform 400ms var(--spring);
+}
+.send.is-ready { background: var(--indigo-day); color: #fff; }
+.send.is-pressed { transform: scale(0.9); }
+
+/* Segmented controls (decorative, inside the app UI). */
+.seg-group { display: inline-flex; padding: 2px; border: 1px solid var(--app-line); border-radius: 8px; background: var(--app-surface); }
+.seg { padding: 3px 10px; border-radius: 6px; font-size: 12.5px; color: var(--app-soft); }
+.seg.is-on { background: var(--app-raised); color: var(--app-text); font-weight: 600; }
