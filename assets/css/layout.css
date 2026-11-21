@@ -186,6 +186,11 @@
   line-height: 1.25;
   text-decoration: none;
 }
+/* Phones held sideways: a shorter menu, so all five links fit without scrolling. */
+@media (max-height: 520px) {
+  .sheet__links { margin-top: var(--s-4); gap: 0; }
+  .sheet__links a { font-size: 1.5rem; line-height: 1.5; }
+}
 .sheet[open] .sheet__links a { animation: soft-rise 700ms var(--ease-out) both; }
 .sheet[open] .sheet__links a:nth-child(2) { animation-delay: 50ms; }
 .sheet[open] .sheet__links a:nth-child(3) { animation-delay: 100ms; }

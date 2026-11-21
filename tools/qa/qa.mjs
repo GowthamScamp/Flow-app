@@ -8,7 +8,7 @@
    Writes screenshots and qa-report.json to tools/qa/out/ (gitignored).
    Checks: console errors/warnings, horizontal overflow at every width,
    full-page + per-viewport screenshots, a Tab walk, no-JS, reduced motion
-   and dark mode.
+   (the site is light only).
    ========================================================================== */
 
 import { spawn } from "node:child_process";
@@ -24,7 +24,10 @@ mkdirSync(OUT, { recursive: true });
 const args = process.argv.slice(2);
 const BASE = args.find((a) => !a.startsWith("--")) ?? "http://localhost:8080/";
 const ONLY = (args.find((a) => a.startsWith("--only="))?.slice(7) ?? (args.some((a) => a.startsWith("--sections=")) ? "" : "widths,shots,keys,nojs,variants")).split(",");
-const WIDTHS = [360, 390, 768, 1024, 1280, 1440, 1920];
+// Small phone, phone, large phone, tablet portrait / landscape, laptop, desktop, big monitor.
+const WIDTHS = [320, 360, 390, 600, 768, 820, 1024, 1280, 1440, 1920, 2560];
+// Widths for screenshots: `--shot-widths=320,768,2560` (default 1440 and 390).
+const SHOT_WIDTHS = (args.find((a) => a.startsWith("--shot-widths="))?.slice(14) ?? "1440,390").split(",").map(Number);
 
 const CHROME = [
   process.env.CHROME_PATH,
@@ -194,14 +197,33 @@ if (ONLY.includes("widths")) {
   });
 }
 
+// Phones and tablets held sideways, plus a short laptop screen: no overflow.
+if (ONLY.includes("landscape")) {
+  await withPage(async (cdp) => {
+    for (const [w, h] of [[667, 375], [844, 390], [932, 430], [1024, 768], [1366, 650]]) {
+      await setViewport(cdp, w, h);
+      await navigate(cdp, BASE);
+      await scrollThrough(cdp, 80);
+      const overflow = await evaluate(cdp, OVERFLOW_JS);
+      console.log(`landscape ${w}x${h}: overflow ${overflow.length ? overflow.join(" | ") : "none"}`);
+    }
+  });
+}
+
 if (ONLY.includes("shots")) {
   await withPage(async (cdp) => {
-    // Default shots are the light design; the dark variant has its own pass.
     await cdp.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "light" }] });
-    for (const w of [1440, 390]) {
+    for (const w of SHOT_WIDTHS) {
       await setViewport(cdp, w, w > 800 ? 900 : 844);
       await navigate(cdp, BASE);
       await sleep(1800);
+      if (args.includes("--full-only")) {
+        // Just the full page (scrolled through first so reveals and lazy images load).
+        await scrollThrough(cdp, 150);
+        await shot(cdp, `full-${w}.png`, true);
+        console.log(`shots ${w}: full page`);
+        continue;
+      }
       await shot(cdp, `view-${w}-00-top.png`);
       // Per-viewport shots, scrolling slowly so reveals and demos can run.
       const total = await evaluate(cdp, "document.documentElement.scrollHeight");
@@ -221,7 +243,6 @@ if (ONLY.includes("shots")) {
 if (ONLY.includes("variants")) {
   const variants = {
     "reduced-motion": [{ name: "prefers-reduced-motion", value: "reduce" }, { name: "prefers-color-scheme", value: "light" }],
-    dark: [{ name: "prefers-color-scheme", value: "dark" }],
   };
   for (const [name, features] of Object.entries(variants)) {
     await withPage(async (cdp) => {
@@ -243,21 +264,6 @@ if (ONLY.includes("variants")) {
         report.variants[`${name}-${w}`] = { console: con.messages };
       }
     });
-    // Manual toggle: force the opposite theme via the footer control.
-    if (name === "dark") {
-      await withPage(async (cdp) => {
-        await setViewport(cdp, 1440);
-        await navigate(cdp, BASE);
-        await evaluate(cdp, `(() => { const i = document.querySelector('[data-theme-toggle] input[value=dark]'); i.click(); })()`);
-        await sleep(800);
-        const srcs = await evaluate(cdp, `[...document.querySelectorAll('picture img')].slice(0,3).map(i => i.currentSrc.split('/').pop())`);
-        await evaluate(cdp, `document.getElementById('chat').scrollIntoView()`);
-        await sleep(1200);
-        await shot(cdp, `toggle-dark-1440-chat.png`);
-        report.variants["toggle-dark"] = { firstImages: srcs };
-        console.log("toggle dark ->", srcs.join(", "));
-      });
-    }
   }
 }
 

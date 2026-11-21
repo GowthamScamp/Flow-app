@@ -37,6 +37,12 @@ html {
   html { scroll-behavior: smooth; }
 }
 
+/* Very large monitors: scale the text up a touch so it keeps its proportion
+   to the wider column. */
+@media (min-width: 2200px) {
+  html { font-size: 112.5%; }
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -55,8 +61,8 @@ body {
 
 h1, h2, h3, h4, p, ul, ol, figure, blockquote, dl, dd { margin: 0; }
 ul[role="list"], ol[role="list"] { list-style: none; padding: 0; }
-img, picture, video, svg { display: block; max-width: 100%; }
-img, video { height: auto; }
+img, picture, svg { display: block; max-width: 100%; }
+img { height: auto; }
 input, button, textarea, select { font: inherit; color: inherit; }
 button { cursor: pointer; background: none; border: 0; padding: 0; }
 a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }

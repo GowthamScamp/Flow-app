@@ -6,11 +6,12 @@
 
    Updates:
      index.html   canonical, og:url, og:image, twitter:image, version text,
-                  the no-JS download lists, releases link and footer links
+                  the no-JS download card and button, releases link and
+                  footer links
      404.html     the "Back to Flow" link
      sitemap.xml  and robots.txt
    Values still containing "TODO" keep their placeholder (and the live page
-   shows "Coming soon" for them).
+   leaves them out, or shows "Coming soon" where a link would be).
    ========================================================================== */
 
 import { readFileSync, writeFileSync } from "node:fs";
@@ -53,16 +54,13 @@ let changed = [];
   html = setAttr(html, "content", "ogImage", values.ogImage);
   html = html.replace(/(<span data-config-text="version">)[^<]*(<\/span>)/g, `$1${SITE.version}$2`);
   html = html.replace(/("softwareVersion":\s*")[^"]*(")/, `$1${SITE.version}$2`);
-  html = setBlock(html, "files:windows", renderFiles(SITE, "windows").trim(), "          ", "              ");
-  html = setBlock(html, "files:ubuntu", renderFiles(SITE, "ubuntu").trim(), "          ", "              ");
+  html = setBlock(html, "files:windows", renderFiles(SITE, "windows").trim(), "            ");
   html = html.replace(/(<!-- config:releases -->)[\s\S]*?(<!-- \/config:releases -->)/, `$1${renderReleases(SITE)}$2`);
   html = setBlock(html, "footer", renderFooterLinks(SITE), "            ");
-  // No-JS hero buttons: straight to the file once it exists.
-  for (const os of ["windows", "ubuntu"]) {
-    const url = SITE.downloads?.[os]?.[0]?.url;
-    const href = url && !isTodo(url) ? url : "#download";
-    html = html.replace(new RegExp(`(<a class="[^"]*" href=")[^"]*(" data-os-button="${os}">)`), `$1${href}$2`);
-  }
+  // No-JS hero button: straight to the installer once it has a real URL.
+  const url = SITE.downloads?.windows?.[0]?.url;
+  const href = url && !isTodo(url) ? url : "#download";
+  html = html.replace(/(<a class="[^"]*" href=")[^"]*(" data-os-button="windows">)/, `$1${href}$2`);
   writeFileSync(file, html);
   changed.push("index.html");
 }

@@ -3,16 +3,15 @@
    Values come from Flow's own code (prompt §3.1). Everything else in the CSS
    refers to these names, so a colour change happens in one place.
 
-   Theming works through `color-scheme` + `light-dark()`:
-   - :root follows the visitor's OS preference (or the footer toggle, which
-     sets data-theme="light" | "dark" on <html>);
+   The site is light only: `color-scheme: light` on :root. Tokens still use
+   `light-dark()` so a few product windows can opt in to the app's dark look:
    - a few product windows (Review, code map, onboarding) force
      `color-scheme: dark`, so every light-dark() token inside them resolves to
      its dark value automatically.
    ========================================================================== */
 
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
 
   /* ---- Grounds ---------------------------------------------------------- */
   --ivory: #F6F2EA;
@@ -89,7 +88,8 @@
   --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px; --s-10: 128px;
 
   /* ---- Layout ----------------------------------------------------------- */
-  --max: 1200px;
+  /* 1200 px up to a 2000 px window, then the column grows with the screen. */
+  --max: clamp(1200px, 60vw, 1520px);
   --gutter: clamp(20px, 5vw, 64px);
   --section-pad: clamp(72px, 9vw, 128px);
   --nav-h: 64px;
@@ -111,7 +111,4 @@
   }
 }
 
-/* The footer toggle overrides the OS preference. */
-:root[data-theme="light"] { color-scheme: light; }
-:root[data-theme="dark"]  { color-scheme: dark; }
 

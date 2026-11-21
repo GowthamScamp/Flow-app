@@ -25,6 +25,14 @@
   gap: var(--s-5);
 }
 .hero__line { display: block; }
+.hero .eyebrow {
+  display: block;
+  padding: 7px 16px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-pill);
+  background: var(--card);
+  letter-spacing: 0.1em;
+}
 .hero__sub { max-inline-size: 30em; color: var(--text-soft); }
 .hero__actions {
   display: flex;
@@ -35,11 +43,6 @@
 }
 .hero__fine, .hero__os-note { font-size: var(--fs-small); color: var(--text-soft); }
 .hero__os-note { margin-top: calc(var(--s-4) * -1); }
-
-/* OS detection (main.js sets data-os on <html>): show the matching button
-   first; on unknown systems both stay, equally weighted. */
-[data-os="windows"] [data-os-button="ubuntu"],
-[data-os="ubuntu"] [data-os-button="windows"] { display: none; }
 
 .hero__visual { margin-top: clamp(32px, 5vw, 64px); }
 .window--hero { background: var(--app-ground); }
@@ -69,19 +72,32 @@
   border-radius: 20px;
   background: var(--card);
   overflow: hidden;
+  transition: transform 500ms var(--ease-out);
 }
+.mode:hover { transform: translateY(-4px); }
 .mode[data-mode="chat"]     { --mode-color: var(--chat); }
 .mode[data-mode="code"]     { --mode-color: var(--code); }
 .mode[data-mode="research"] { --mode-color: var(--research); }
 
 /* The screenshot is a preview: cropped to the top-left of the story crop. */
 .mode__shot {
+  position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-bottom: 1px solid var(--hairline);
   background: var(--app-ground);
 }
-.mode__shot img { width: 100%; height: 100%; object-fit: cover; object-position: 0 0; }
+.mode__shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 0 0; }
+
+/* Tablets: each card becomes a compact row (preview left, text right) instead
+   of a tall single-column block. Phones keep the stacked card, with a shorter
+   preview. */
+@media (min-width: 600px) and (max-width: 899px) {
+  .mode { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: none; }
+  .mode__shot { aspect-ratio: auto; min-height: 220px; border-bottom: 0; border-right: 1px solid var(--hairline); }
+  .mode__text { align-content: center; padding: var(--s-5) var(--s-6); }
+}
+@media (max-width: 599px) { .mode__shot { aspect-ratio: 16 / 10; } }
 .mode__text { display: grid; align-content: start; gap: var(--s-2); padding: var(--s-5) var(--s-5) var(--s-6); }
 .mode__name { font-size: 1.5rem; letter-spacing: -0.02em; line-height: 1.2; }
 .mode__name a { color: var(--mode-color); text-decoration: none; }
@@ -714,6 +730,8 @@
 .fmt__ext { font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--text); }
 .fmt__name { font-size: 13px; color: var(--text-soft); }
 .export__divider { width: 1px; margin: 6px 6px; background: var(--hairline-strong); }
+/* On phones the pills wrap, and a lone divider at a line end looks like a glitch. */
+@media (max-width: 599px) { .export__divider { display: none; } }
 .export__shot { width: 100%; max-width: 440px; justify-self: end; aspect-ratio: 979 / 1567; }
 
 @media (max-width: 899px) {
@@ -789,178 +807,57 @@
 }
 @media (prefers-reduced-motion: reduce) { .chips .dot { animation: none; opacity: 1; } }
 
-/* =============================================================== FILM */
-
-.player {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  border-radius: var(--r-window);
-  border: 1px solid var(--hairline);
-  box-shadow: var(--shadow-window);
-  background: #000;
-  overflow: hidden;
-  color: #fff;
-}
-.player__video { width: 100%; height: 100%; object-fit: cover; }
-.player video::cue {
-  font-family: var(--font-sans);
-  font-size: clamp(14px, 2vw, 22px);
-  color: #fff;
-  background: rgb(10 11 15 / 72%);
-}
-
-.player__big {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  width: clamp(64px, 8vw, 88px);
-  height: clamp(64px, 8vw, 88px);
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  /* Dark disc: stays visible over the light end-card poster. */
-  background: rgb(10 11 15 / 62%);
-  -webkit-backdrop-filter: blur(14px) saturate(1.4);
-  backdrop-filter: blur(14px) saturate(1.4);
-  border: 1px solid rgb(255 255 255 / 22%);
-  color: #fff;
-  transition: transform 600ms var(--spring), opacity 300ms var(--ease-out);
-}
-.player__big:hover { transform: scale(1.06); }
-.player.has-started .player__big { opacity: 0; transform: scale(0.9); pointer-events: none; }
-
-.player__bar {
-  position: absolute;
-  inset: auto 0 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 40px 14px 12px;
-  background: linear-gradient(to bottom, transparent, rgb(0 0 0 / 58%));
-  transition: opacity 400ms var(--ease-out);
-}
-.player:not(.has-started) .player__bar { opacity: 0; pointer-events: none; }
-.player.is-idle .player__bar { opacity: 0; }
-.player.is-idle { cursor: none; }
-.player:focus-within .player__bar { opacity: 1; }
-
-.pbtn {
-  flex: none;
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  color: #fff;
-  transition: transform 300ms var(--ease-out);
-}
-.pbtn:hover { transform: scale(1.08); }
-.pbtn[aria-pressed="false"] { opacity: 0.6; }
-.pbtn:focus-visible, .scrub input:focus-visible { outline-color: #fff; }
-.player__time { font-family: var(--font-mono); font-size: 12px; opacity: 0.85; white-space: nowrap; padding: 0 6px; }
-
-.scrub { position: relative; flex: 1; display: flex; align-items: center; height: 28px; }
-.scrub input {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 28px;
-  margin: 0;
-  background: transparent;
-  cursor: pointer;
-}
-.scrub input::-webkit-slider-runnable-track {
-  height: 3px;
-  border-radius: 3px;
-  background: linear-gradient(to right, #fff var(--pct, 0%), rgb(255 255 255 / 28%) var(--pct, 0%));
-}
-.scrub input::-moz-range-track { height: 3px; border-radius: 3px; background: rgb(255 255 255 / 28%); }
-.scrub input::-moz-range-progress { height: 3px; border-radius: 3px; background: #fff; }
-.scrub input::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 12px;
-  height: 12px;
-  margin-top: -4.5px;
-  border-radius: 50%;
-  background: #fff;
-  border: 0;
-}
-.scrub input::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: #fff; border: 0; }
-.scrub__tip {
-  position: absolute;
-  bottom: 30px;
-  translate: -50% 0;
-  padding: 3px 7px;
-  border-radius: 6px;
-  background: rgb(10 11 15 / 85%);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  opacity: 0;
-  transition: opacity 200ms var(--ease-out);
-  pointer-events: none;
-}
-.scrub:hover .scrub__tip { opacity: 1; }
-
-@media (max-width: 560px) {
-  .player__time { display: none; }
-  .pbtn { width: 32px; height: 32px; }
-}
-
-.player:fullscreen { border: 0; border-radius: 0; aspect-ratio: auto; }
-.player:fullscreen .player__video { object-fit: contain; }
-
 /* =========================================================== DOWNLOAD */
-.platforms {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--s-5);
-  margin-top: clamp(48px, 7vw, 88px);
-}
-@media (max-width: 859px) { .platforms { grid-template-columns: 1fr; } }
-
+/* One card for the one platform: the platform on the left, the installer and
+   its button on the right. */
 .platform {
-  position: relative;
   display: grid;
-  align-content: start;
-  gap: var(--s-5);
-  padding: clamp(24px, 3.6vw, 40px);
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: clamp(24px, 5vw, 72px);
+  align-items: center;
+  margin-top: clamp(40px, 6vw, 64px);
+  padding: clamp(28px, 4.5vw, 56px);
   border: 1px solid var(--hairline-strong);
-  border-radius: 24px;
+  border-radius: 28px;
   background: var(--card);
+  box-shadow: var(--shadow-window);
 }
-.platform.is-detected {
-  order: -1;
-  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent),
-    0 40px 80px -40px color-mix(in srgb, var(--accent) 45%, transparent);
-}
-.platform__head { display: flex; align-items: center; gap: 14px; }
+@media (max-width: 859px) { .platform { grid-template-columns: 1fr; } }
+
+.platform__head { display: flex; align-items: center; gap: 16px; }
 .platform__head h3 { font-size: clamp(1.5rem, 2.4vw, 2rem); letter-spacing: -0.025em; line-height: 1.1; }
 .platform__glyph {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   display: grid;
   place-items: center;
-  border-radius: 14px;
+  border-radius: 16px;
   background: color-mix(in srgb, var(--accent) 10%, transparent);
   color: var(--accent);
 }
-.platform__files { display: grid; gap: var(--s-5); margin: 0; padding: 0; list-style: none; }
-.file { display: grid; gap: var(--s-3); padding-top: var(--s-5); border-top: 1px solid var(--hairline); }
-.file__head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); flex-wrap: wrap; }
-.file__label { font-weight: 600; font-size: 1.0625rem; }
+.platform__files { display: grid; gap: var(--s-6); margin: 0; padding: 0; list-style: none; }
+
+.file {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--s-5);
+  align-items: center;
+}
+@media (max-width: 599px) { .file { grid-template-columns: 1fr; } }
+.file__label { font-weight: 600; font-size: 1.125rem; letter-spacing: -0.01em; }
 .file__meta {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 4px 20px;
-  margin: 0;
+  gap: 6px 20px;
+  margin: var(--s-3) 0 0;
   font-size: var(--fs-small);
 }
 .file__meta div { display: contents; }
 .file__meta dt { color: var(--text-soft); }
 .file__meta dd { margin: 0; overflow-wrap: anywhere; }
+.file__action { display: grid; justify-items: start; gap: var(--s-3); }
 
+/* Checksum, shown only once config.js has one. */
 .sha summary {
   display: inline-flex;
   align-items: center;
@@ -1006,11 +903,11 @@
 }
 .sha__copy:hover { background: var(--hairline); }
 
-.download__releases { margin-top: var(--s-6); text-align: center; }
+.download__releases { margin-top: var(--s-6); }
+.download__releases:empty { display: none; }
 .download__note {
-  max-inline-size: 34em;
-  margin: var(--s-4) auto 0;
-  text-align: center;
+  max-inline-size: 38em;
+  margin-top: var(--s-4);
   font-size: 0.9375rem;
   color: var(--text-soft);
 }
@@ -1090,6 +987,7 @@
 .footer__links { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 0; padding: 0; list-style: none; font-size: 0.9375rem; }
 .footer__links a { color: var(--text-soft); text-decoration: none; }
 .footer__links a:hover { color: var(--text); }
+.footer__legal { margin-top: var(--s-6); font-size: var(--fs-small); color: var(--text-soft); }
 .footer__base {
   display: flex;
   flex-wrap: wrap;
@@ -1101,20 +999,6 @@
   color: var(--text-soft);
 }
 
-.theme-toggle {
-  display: inline-flex;
-  gap: 2px;
-  margin: 0;
-  padding: 3px;
-  border: 1px solid var(--hairline-strong);
-  border-radius: var(--r-pill);
-}
-.theme-toggle label { position: relative; }
-.theme-toggle input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
-.theme-toggle span { display: block; padding: 5px 12px; border-radius: var(--r-pill); font-size: 13px; color: var(--text-soft); }
-.theme-toggle input:checked + span { background: color-mix(in srgb, var(--text) 9%, transparent); color: var(--text); }
-.theme-toggle input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
-html:not(.js) .theme-toggle { display: none; }
 
 /* ============================================================ PERFORMANCE */
 /* The Chat and Review windows have fixed heights, so the browser can skip

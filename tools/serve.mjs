@@ -25,9 +25,8 @@ const TYPES = {
   ".json": "application/json", ".webmanifest": "application/manifest+json",
   ".xml": "application/xml", ".txt": "text/plain; charset=utf-8", ".svg": "image/svg+xml",
   ".webp": "image/webp", ".png": "image/png", ".jpg": "image/jpeg", ".woff2": "font/woff2",
-  ".mp4": "video/mp4", ".vtt": "text/vtt; charset=utf-8",
 };
-const COMPRESSIBLE = new Set([".html", ".css", ".js", ".mjs", ".json", ".webmanifest", ".xml", ".txt", ".svg", ".vtt"]);
+const COMPRESSIBLE = new Set([".html", ".css", ".js", ".mjs", ".json", ".webmanifest", ".xml", ".txt", ".svg"]);
 const cache = new Map(); // path -> gzipped bytes, so repeat requests stay cheap
 
 createServer((req, res) => {
@@ -55,16 +54,7 @@ createServer((req, res) => {
     res.end(body);
     return;
   }
-  // Range support so the film can seek, like a real static host.
-  const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range ?? "");
-  if (range) {
-    const start = range[1] ? Number(range[1]) : 0;
-    const end = range[2] ? Number(range[2]) : stat.size - 1;
-    res.writeHead(206, { ...headers, "content-range": `bytes ${start}-${end}/${stat.size}`, "accept-ranges": "bytes", "content-length": end - start + 1 });
-    createReadStream(file, { start, end }).pipe(res);
-    return;
-  }
-  res.writeHead(200, { ...headers, "accept-ranges": "bytes", "content-length": stat.size });
+  res.writeHead(200, { ...headers, "content-length": stat.size });
   createReadStream(file).pipe(res);
 }).listen(PORT, "127.0.0.1", () => console.log(`Flow site preview: http://127.0.0.1:${PORT}/  (gzip on)`));
 

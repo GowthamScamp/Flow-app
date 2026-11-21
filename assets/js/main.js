@@ -1,13 +1,12 @@
 /* ==========================================================================
    Flow site — boot.
    Everything here enhances a page that already works without JavaScript:
-   config rendering, OS detection, theme, nav, soft scroll reveals, and
+   config rendering, the platform note, nav, soft scroll reveals, and
    lazy-loading the demos.
    ========================================================================== */
 
 import { SITE } from "./config.js";
 import { listTodos, primaryUrl, renderFiles, renderReleases, renderFooterLinks } from "./downloads.js";
-import { createPlayer } from "./demos/player.js";
 
 const root = document.documentElement;
 const $ = (sel, el = document) => el.querySelector(sel);
@@ -18,15 +17,13 @@ boot();
 function boot() {
   applyConfig();
   warnTodos();
-  detectOS();
-  initTheme();
+  noteOtherSystems();
   // Scroll reveals only hide content once this class is set, so a script that
   // fails earlier never leaves the page blank.
   root.classList.add("booted");
   initNav();
   initReveals();
   initDemos();
-  initFilm();
   initCopyButtons();
 }
 
@@ -34,13 +31,11 @@ function boot() {
 
 function applyConfig() {
   $$('[data-config-text="version"]').forEach((el) => (el.textContent = SITE.version));
-  for (const os of ["windows", "ubuntu"]) {
-    const list = $(`[data-files="${os}"]`);
-    if (list) list.innerHTML = renderFiles(SITE, os);
-    // Hero buttons download directly once a real URL exists; until then they
-    // lead to the Download section, where the "Coming soon" state is explained.
-    $$(`[data-os-button="${os}"]`).forEach((a) => (a.href = primaryUrl(SITE, os) ?? "#download"));
-  }
+  const list = $('[data-files="windows"]');
+  if (list) list.innerHTML = renderFiles(SITE, "windows");
+  // The hero button downloads directly once there is a real URL; until then
+  // it leads to the Download section.
+  $$('[data-os-button="windows"]').forEach((a) => (a.href = primaryUrl(SITE, "windows") ?? "#download"));
   const releases = $("[data-releases]");
   if (releases) releases.innerHTML = renderReleases(SITE);
   const footer = $("[data-footer-links]");
@@ -57,63 +52,14 @@ function warnTodos() {
   }
 }
 
-/* ---- OS detection -------------------------------------------------------------
-   userAgentData first, then the user agent string. Windows and Linux/Ubuntu
-   get their own button; everything else (macOS, iOS, Android, ChromeOS,
-   unknown) sees both buttons plus a quiet note. */
+/* ---- Other systems -------------------------------------------------------------
+   Flow is for Windows only. Visitors on anything else still see the download
+   button, plus one quiet line so there are no surprises. userAgentData first,
+   then the user agent string. */
 
-function detectOS() {
-  const hint = (navigator.userAgentData?.platform || "").toLowerCase();
-  const ua = navigator.userAgent.toLowerCase();
-  const source = hint || ua;
-  let os = "other";
-  if (/android|iphone|ipad|ipod|mac|cros|chrome ?os|chromium ?os/.test(source) || /android/.test(ua)) os = "other";
-  else if (/win/.test(source)) os = "windows";
-  else if (/linux|ubuntu|x11/.test(source)) os = "ubuntu";
-
-  root.dataset.os = os;
-  if (os === "other") {
-    $("[data-os-note]")?.removeAttribute("hidden");
-  } else {
-    $(`[data-platform="${os}"]`)?.classList.add("is-detected");
-  }
-}
-
-/* ---- Theme ------------------------------------------------------------------
-   Auto follows the OS. Light / Dark set data-theme on <html> (the inline
-   script in <head> already did that before first paint). <picture> sources
-   can't see data-theme, so their media queries are rewritten to match. */
-
-const THEME_KEY = "flow-theme";
-
-function initTheme() {
-  const toggle = $("[data-theme-toggle]");
-  let pref = "auto";
-  try {
-    pref = localStorage.getItem(THEME_KEY) || "auto";
-  } catch { /* storage blocked */ }
-  if (!["auto", "light", "dark"].includes(pref)) pref = "auto";
-  applyTheme(pref);
-
-  toggle?.addEventListener("change", (event) => {
-    if (event.target.name !== "theme") return;
-    applyTheme(event.target.value);
-    try {
-      if (event.target.value === "auto") localStorage.removeItem(THEME_KEY);
-      else localStorage.setItem(THEME_KEY, event.target.value);
-    } catch { /* storage blocked: the choice lasts for this visit */ }
-  });
-
-  function applyTheme(value) {
-    if (value === "auto") root.removeAttribute("data-theme");
-    else root.dataset.theme = value;
-    const media = value === "dark" ? "all" : value === "light" ? "not all" : "(prefers-color-scheme: dark)";
-    for (const source of $$("source[data-dark]")) {
-      if (source.media !== media) source.media = media;
-    }
-    const input = toggle?.querySelector(`input[value="${value}"]`);
-    if (input) input.checked = true;
-  }
+function noteOtherSystems() {
+  const source = (navigator.userAgentData?.platform || navigator.userAgent).toLowerCase();
+  if (!/win/.test(source) || /darwin/.test(source)) $("[data-os-note]")?.removeAttribute("hidden");
 }
 
 /* ---- Nav --------------------------------------------------------------------- */
@@ -127,7 +73,7 @@ function initNav() {
   new IntersectionObserver(([entry]) => nav.classList.toggle("is-scrolled", !entry.isIntersecting)).observe(sentinel);
 
   // Scroll-spy: the section crossing the middle of the viewport is "current".
-  // Sections without a nav link (hero, film, FAQ) clear the highlight.
+  // Sections without a nav link (hero, FAQ) clear the highlight.
   const links = $$("[data-spy]");
   const spy = new IntersectionObserver(
     (entries) => {
@@ -213,17 +159,7 @@ function initDemos() {
   $$("[data-demo]").forEach((el) => near.observe(el));
 }
 
-/* ---- Film ----------------------------------------------------------------------------------- */
-
-// Building the controls is cheap (the video itself loads only on play), and
-// doing it up front means the bare <video> is never a Tab stop. Without JS the
-// native <video controls> works on its own.
-function initFilm() {
-  const el = $("#film [data-player]");
-  if (el) createPlayer(el);
-}
-
-/* ---- SHA-256 copy buttons ------------------------------------------------------------------- */
+/* ---- SHA-256 copy button (shown once a checksum is set in config.js) ------------------------ */
 
 function initCopyButtons() {
   document.addEventListener("click", async (event) => {

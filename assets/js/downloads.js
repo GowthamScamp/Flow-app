@@ -5,6 +5,9 @@
    tools/apply-config.mjs (which writes the same markup into index.html for
    visitors without JavaScript). It must stay free of DOM access so Node can
    import it.
+
+   Anything not known yet (a size, a checksum) is simply left out, so the
+   card never shows filler like "coming soon" for details.
    ========================================================================== */
 
 /** A value is a placeholder while it still mentions TODO (or is empty). */
@@ -37,32 +40,33 @@ const COPY_ICON =
 
 function renderFile(file, version, index, os) {
   const id = `sha-${os}-${index}`;
-  const name = isTodo(file.file)
-    ? '<span class="soon">File name coming soon</span>'
-    : `<span class="mono">${escapeHtml(file.file)}</span>`;
-  const size = isTodo(file.size) ? '<span class="soon">Size coming soon</span>' : escapeHtml(file.size);
+  const rows = [`<div><dt>Version</dt><dd>${escapeHtml(version)}</dd></div>`];
+  if (!isTodo(file.file)) rows.push(`<div><dt>File</dt><dd class="mono">${escapeHtml(file.file)}</dd></div>`);
+  if (!isTodo(file.size)) rows.push(`<div><dt>Size</dt><dd>${escapeHtml(file.size)}</dd></div>`);
+
   const button = isTodo(file.url)
-    ? `<span class="btn btn--soon" aria-disabled="true">Coming soon</span>`
-    : `<a class="btn btn--primary" href="${escapeHtml(file.url)}">Download<span class="vh"> ${escapeHtml(file.label)}</span></a>`;
+    ? `<span class="btn btn--soon btn--large" aria-disabled="true">Coming soon</span>`
+    : `<a class="btn btn--primary btn--large" href="${escapeHtml(file.url)}">Download<span class="vh"> ${escapeHtml(file.label)}</span></a>`;
+
+  // The checksum disclosure appears only once there is a checksum to show.
   const sha = isTodo(file.sha256)
-    ? `<p class="sha__value"><span class="soon">Checksum coming soon</span></p>`
-    : `<p class="sha__value"><code id="${id}">${escapeHtml(file.sha256)}</code>` +
-      `<button class="sha__copy" type="button" data-copy="${id}">${COPY_ICON}<span>Copy</span></button></p>`;
+    ? ""
+    : `
+              <details class="sha">
+                <summary>SHA-256</summary>
+                <p class="sha__value"><code id="${id}">${escapeHtml(file.sha256)}</code><button class="sha__copy" type="button" data-copy="${id}">${COPY_ICON}<span>Copy</span></button></p>
+              </details>`;
 
   return `<li class="file">
-            <div class="file__head">
+            <div class="file__info">
               <p class="file__label">${escapeHtml(file.label)}</p>
-              ${button}
+              <dl class="file__meta">
+                ${rows.join("\n                ")}
+              </dl>
             </div>
-            <dl class="file__meta">
-              <div><dt>Version</dt><dd>${escapeHtml(version)}</dd></div>
-              <div><dt>File</dt><dd>${name}</dd></div>
-              <div><dt>Size</dt><dd>${size}</dd></div>
-            </dl>
-            <details class="sha">
-              <summary>SHA-256</summary>
-              ${sha}
-            </details>
+            <div class="file__action">
+              ${button}${sha}
+            </div>
           </li>`;
 }
 
@@ -71,26 +75,16 @@ export function renderFiles(site, os) {
   return (site.downloads?.[os] ?? []).map((f, i) => renderFile(f, site.version, i, os)).join("\n          ");
 }
 
-/** The releases link, or a quiet "coming soon" line while it is a TODO. */
+/** The releases link, or nothing while it is a TODO. */
 export function renderReleases(site) {
   return isTodo(site.releasesUrl)
-    ? `<span class="soon">All releases and release notes: coming soon</span>`
+    ? ""
     : `<a class="arrow-link" href="${escapeHtml(site.releasesUrl)}">All releases and release notes <span aria-hidden="true">→</span></a>`;
 }
 
-/** Footer links: Download · Releases · Contact · Privacy (only when set). */
+/** Footer links: Download, and Privacy only when a URL is set. */
 export function renderFooterLinks(site) {
   const items = [`<li><a href="#download">Download</a></li>`];
-  items.push(
-    isTodo(site.releasesUrl)
-      ? `<li><span class="soon">Releases (coming soon)</span></li>`
-      : `<li><a href="${escapeHtml(site.releasesUrl)}">Releases</a></li>`
-  );
-  items.push(
-    isTodo(site.contactEmail)
-      ? `<li><span class="soon">Contact (coming soon)</span></li>`
-      : `<li><a href="mailto:${escapeHtml(site.contactEmail)}">Contact</a></li>`
-  );
   if (site.privacyUrl && !isTodo(site.privacyUrl)) {
     items.push(`<li><a href="${escapeHtml(site.privacyUrl)}">Privacy</a></li>`);
   }

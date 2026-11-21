@@ -27,8 +27,21 @@
 .btn svg { flex: none; }
 .btn--large { --h: 52px; padding: 0 26px; font-size: 1rem; }
 .btn--small { --h: 34px; padding: 0 14px; font-size: 0.875rem; }
+/* Touchscreens: comfortably tappable (about 44 px) buttons. */
+@media (pointer: coarse) {
+  .btn { --h: 46px; }
+  .btn--large { --h: 52px; }
+  .btn--small { --h: 40px; }
+}
 
-.btn--primary { background: var(--accent); color: var(--accent-contrast); }
+.btn--primary {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  /* A hairline highlight and a soft coloured shadow give the button depth. */
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 18%),
+    0 8px 20px -10px color-mix(in srgb, var(--accent) 70%, transparent);
+}
 .btn--primary:hover { transform: translateY(-1px); filter: brightness(1.08); }
 .btn--primary:active { transform: translateY(0); filter: brightness(0.96); }
 

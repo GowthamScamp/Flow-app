@@ -5,7 +5,6 @@ Run once (and again whenever _raw/ changes):  python tools/build_assets.py
 What it makes
   assets/img/<name>-<theme>-<width>.webp   story crops of the 3200x2000 screenshots
   assets/img/og-1280x720.jpg               social card
-  assets/img/film-poster-1920.webp         poster for the film player
   assets/icons/*                           favicons and app icons
 
 Crops are written as a cropped "master" first and then resized, so every width
@@ -30,23 +29,24 @@ WIDTHS = (640, 1024, 1600, 2400)
 QUALITY = 82
 
 # name -> (screenshot stem, themes, crop box in 3200x2000 pixels or None for full)
+# The site is light only. The two dark entries below are the app's own dark
+# windows (Review dialog, code map), used as no-JavaScript fallbacks.
 # The boxes were measured from the screenshots: each one frames the part of the
 # UI that the section on the page talks about.
 CROPS: dict[str, tuple[str, tuple[str, ...], tuple[int, int, int, int] | None]] = {
     # Hero: the Home screen down to the end of the Recent work panel.
-    "home": ("01-home", ("light", "dark"), (0, 0, 3200, 1720)),
-    # Modes story: one crop per mode, all close to the same 1.45 aspect so the
-    # cross-fade between them never changes the frame.
-    "mode-chat": ("03-chat-thinking", ("light", "dark"), (1058, 185, 2750, 1353)),
-    "mode-code": ("04-code-changes", ("light", "dark"), (666, 159, 2199, 1217)),
-    "mode-research": ("08-research", ("light", "dark"), (659, 185, 2193, 1243)),
+    "home": ("01-home", ("light",), (0, 0, 3200, 1720)),
+    # Mode cards: one crop per mode, all close to the same 1.45 aspect.
+    "mode-chat": ("03-chat-thinking", ("light",), (1058, 185, 2750, 1353)),
+    "mode-code": ("04-code-changes", ("light",), (666, 159, 2199, 1217)),
+    "mode-research": ("08-research", ("light",), (659, 185, 2193, 1243)),
     # Static fallbacks for the demos (shown only when JavaScript is off).
-    "chat-answer": ("02b-chat-answer", ("light", "dark"), None),
+    "chat-answer": ("02b-chat-answer", ("light",), None),
     "code-approval": ("05-code-approval", ("dark",), None),
     "code-graph": ("06c-code-graph-full", ("dark",), None),
-    "research-sources": ("10-research-sources", ("light", "dark"), None),
+    "research-sources": ("10-research-sources", ("light",), None),
     # Research export: the Report panel with its MD/HTML/PDF/DOCX/BIB/RIS row.
-    "research-report": ("09-research-report", ("light", "dark"), (2221, 152, 3200, 1719)),
+    "research-report": ("09-research-report", ("light",), (2221, 152, 3200, 1719)),
 }
 
 
@@ -99,10 +99,6 @@ def build_brand(report: list[tuple[Path, str]]) -> None:
     og.resize((1280, 720), Image.LANCZOS).save(out, "JPEG", quality=86, optimize=True, progressive=True)
     report.append((out, "1280x720"))
 
-    poster = Image.open(BRAND / "flow-end-card-1920x1080.png").convert("RGB")
-    out = IMG / "film-poster-1920.webp"
-    write_webp(poster.resize((1920, 1080), Image.LANCZOS), out)
-    report.append((out, "1920x1080"))
 
 
 # Budgets: flag anything that would make the page feel heavy.
