@@ -1,8 +1,8 @@
 /* ==========================================================================
    Flow site — boot.
    Everything here enhances a page that already works without JavaScript:
-   config rendering, OS detection, theme, nav, scroll reveals, the ground
-   colour, the Modes story, and lazy-loading the demos.
+   config rendering, OS detection, theme, nav, soft scroll reveals, and
+   lazy-loading the demos.
    ========================================================================== */
 
 import { SITE } from "./config.js";
@@ -10,10 +10,8 @@ import { listTodos, primaryUrl, renderFiles, renderReleases, renderFooterLinks }
 import { createPlayer } from "./demos/player.js";
 
 const root = document.documentElement;
-const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const $ = (sel, el = document) => el.querySelector(sel);
 const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
-const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
 
 boot();
 
@@ -22,15 +20,11 @@ function boot() {
   warnTodos();
   detectOS();
   initTheme();
-  // Split headlines into word masks *before* .booted hides them, so nothing
-  // flashes between the two steps.
-  $$('[data-words="scroll"]').forEach(splitWords);
+  // Scroll reveals only hide content once this class is set, so a script that
+  // fails earlier never leaves the page blank.
   root.classList.add("booted");
   initNav();
-  initGround();
   initReveals();
-  initTiltFallback();
-  initModes();
   initDemos();
   initFilm();
   initCopyButtons();
@@ -122,47 +116,6 @@ function initTheme() {
   }
 }
 
-/* ---- Headline word masks ------------------------------------------------------ */
-
-function splitWords(el) {
-  const isHeading = /^H[1-6]$/.test(el.tagName);
-  // Headings keep one clean accessible name; the word spans are hidden from AT.
-  if (isHeading) el.setAttribute("aria-label", el.textContent.trim().replace(/\s+/g, " "));
-  let index = 0;
-  const walk = (node) => {
-    for (const child of [...node.childNodes]) {
-      if (child.nodeType === Node.TEXT_NODE) {
-        const frag = document.createDocumentFragment();
-        for (const part of child.textContent.split(/(\s+)/)) {
-          if (!part) continue;
-          if (/^\s+$/.test(part)) {
-            frag.append(" ");
-            continue;
-          }
-          const mask = document.createElement("span");
-          mask.className = "w";
-          const inner = document.createElement("span");
-          inner.className = "w__i";
-          inner.style.setProperty("--i", index++);
-          inner.textContent = part;
-          mask.append(inner);
-          frag.append(mask);
-        }
-        child.replaceWith(frag);
-      } else if (child.nodeType === Node.ELEMENT_NODE) {
-        walk(child);
-      }
-    }
-  };
-  walk(el);
-  if (isHeading) {
-    const wrap = document.createElement("span");
-    wrap.setAttribute("aria-hidden", "true");
-    wrap.append(...el.childNodes);
-    el.append(wrap);
-  }
-}
-
 /* ---- Nav --------------------------------------------------------------------- */
 
 function initNav() {
@@ -173,14 +126,20 @@ function initNav() {
   const sentinel = $("[data-scroll-sentinel]");
   new IntersectionObserver(([entry]) => nav.classList.toggle("is-scrolled", !entry.isIntersecting)).observe(sentinel);
 
-  // Which ground is under the nav? Watch a thin band at the top of the viewport.
-  const under = new IntersectionObserver(
+  // Scroll-spy: the section crossing the middle of the viewport is "current".
+  // Sections without a nav link (hero, film, FAQ) clear the highlight.
+  const links = $$("[data-spy]");
+  const spy = new IntersectionObserver(
     (entries) => {
-      for (const entry of entries) if (entry.isIntersecting) nav.dataset.over = entry.target.dataset.ground;
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const current = entry.target.dataset.spySection || "";
+        links.forEach((a) => (a.dataset.spy === current ? a.setAttribute("aria-current", "true") : a.removeAttribute("aria-current")));
+      }
     },
-    { rootMargin: "0px 0px -94% 0px" }
+    { rootMargin: "-49.5% 0px -49.5% 0px" }
   );
-  $$("[data-ground]:not([data-ground-layer])").forEach((s) => under.observe(s));
+  $$("main > section").forEach((s) => spy.observe(s));
 
   // Mobile sheet: a modal <dialog> gives us the focus trap and Esc for free.
   const sheet = $("[data-menu]");
@@ -198,152 +157,32 @@ function initNav() {
   }
 }
 
-/* ---- Ground colour and scroll-spy ----------------------------------------------
-   The section crossing the middle of the viewport decides both the ground
-   colour and which nav link is current. */
-
-function initGround() {
-  const layer = $("[data-ground-layer]");
-  const links = $$("[data-spy]");
-  const io = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        const section = entry.target;
-        if (layer) layer.dataset.ground = section.dataset.ground;
-        const spy = section.dataset.spySection || "";
-        links.forEach((a) => (a.dataset.spy === spy ? a.setAttribute("aria-current", "true") : a.removeAttribute("aria-current")));
-      }
-    },
-    { rootMargin: "-49.5% 0px -49.5% 0px" }
-  );
-  $$("[data-ground]:not([data-ground-layer])").forEach((s) => io.observe(s));
-}
-
 /* ---- Reveals ----------------------------------------------------------------------
-   Headlines reveal once they are 25 % into view; body copy a little earlier.
-   Reaching the very end of the page reveals anything still waiting. */
+   Headlines and copy rise in once, when they are 12 % into view. Reaching
+   the very end of the page reveals anything still waiting. */
 
 function initReveals() {
   const reveal = (el) => el.classList.add("is-in");
-  const make = (margin) =>
-    new IntersectionObserver(
-      (entries, obs) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          reveal(entry.target);
-          obs.unobserve(entry.target);
-        }
-      },
-      { rootMargin: margin }
-    );
-  const words = make("0px 0px -25% 0px");
-  const body = make("0px 0px -12% 0px");
-  $$('[data-words="scroll"]').forEach((el) => words.observe(el));
-  $$(".reveal").forEach((el) => body.observe(el));
+  const io = new IntersectionObserver(
+    (entries, obs) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        reveal(entry.target);
+        obs.unobserve(entry.target);
+      }
+    },
+    { rootMargin: "0px 0px -12% 0px" }
+  );
+  $$(".reveal").forEach((el) => io.observe(el));
 
   const end = document.createElement("div");
   end.setAttribute("aria-hidden", "true");
   document.body.append(end);
   new IntersectionObserver(([entry], obs) => {
     if (!entry.isIntersecting) return;
-    $$('[data-words="scroll"]:not(.is-in), .reveal:not(.is-in)').forEach(reveal);
+    $$(".reveal:not(.is-in)").forEach(reveal);
     obs.disconnect();
   }).observe(end);
-}
-
-/* ---- Tilt and parallax fallback ------------------------------------------------------
-   Browsers with scroll-driven animations do this in CSS (layout.css). Others
-   get a small IntersectionObserver + rAF version setting the same values. */
-
-function initTiltFallback() {
-  if (reducedMotion.matches || CSS.supports("animation-timeline: view()")) return;
-
-  const flatten = new IntersectionObserver(
-    (entries, obs) => {
-      for (const entry of entries) {
-        if (entry.intersectionRatio < 0.25) continue;
-        entry.target.classList.add("is-flat");
-        obs.unobserve(entry.target);
-      }
-    },
-    { threshold: [0, 0.25] }
-  );
-  $$("[data-tilt]").forEach((el) => flatten.observe(el));
-
-  const visible = new Set();
-  let queued = false;
-  const update = () => {
-    queued = false;
-    const vh = innerHeight;
-    // Read every rect first, then write, so the browser lays out once.
-    const reads = [...visible].map((el) => [el, el.getBoundingClientRect()]);
-    for (const [el, r] of reads) {
-      const progress = (r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2);
-      el.style.setProperty("--drift", clamp(progress, -1, 1).toFixed(3));
-    }
-  };
-  const schedule = () => {
-    if (!queued && visible.size) {
-      queued = true;
-      requestAnimationFrame(update);
-    }
-  };
-  const watch = new IntersectionObserver((entries) => {
-    for (const entry of entries) entry.isIntersecting ? visible.add(entry.target) : visible.delete(entry.target);
-    schedule();
-  });
-  $$("[data-parallax]").forEach((el) => watch.observe(el));
-  addEventListener("scroll", schedule, { passive: true });
-}
-
-/* ---- Modes: sticky scroll story ---------------------------------------------------------
-   On wide screens the section is 300vh tall with a sticky stage. Scroll
-   progress through it picks the active mode (thirds) and fills its rail. */
-
-function initModes() {
-  const section = $("#modes");
-  const track = $("[data-modes]");
-  if (!section || !track) return;
-  const modes = $$(".mode", section);
-  const wide = matchMedia("(min-width: 900px)");
-  let active = -1;
-  let inView = false;
-  let queued = false;
-
-  const update = () => {
-    queued = false;
-    if (!wide.matches) {
-      section.classList.remove("is-live");
-      modes.forEach((m) => m.classList.remove("is-active"));
-      active = -1;
-      return;
-    }
-    const rect = track.getBoundingClientRect();
-    const distance = Math.max(1, rect.height - innerHeight);
-    const progress = clamp(-rect.top / distance, 0, 0.9999);
-    const index = Math.floor(progress * modes.length);
-    section.classList.add("is-live");
-    if (index !== active) {
-      modes.forEach((m, i) => m.classList.toggle("is-active", i === index));
-      active = index;
-    }
-    modes[index].style.setProperty("--p", (progress * modes.length - index).toFixed(3));
-  };
-  const schedule = () => {
-    if (!queued) {
-      queued = true;
-      requestAnimationFrame(update);
-    }
-  };
-
-  new IntersectionObserver(([entry]) => {
-    inView = entry.isIntersecting;
-    if (inView) schedule();
-  }).observe(track);
-  addEventListener("scroll", () => inView && schedule(), { passive: true });
-  wide.addEventListener("change", schedule);
-  schedule();
 }
 
 /* ---- Demos -------------------------------------------------------------------------------

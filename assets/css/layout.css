@@ -1,6 +1,6 @@
 /* ==========================================================================
    Layout: the ground layer, containers, section rhythm, the nav, window
-   frames and the tilt / parallax that windows get as they enter.
+   and the window frame that product screenshots sit in.
    ========================================================================== */
 
 /* The icon sprite must stay rendered (not display:none) or its gradient
@@ -8,24 +8,7 @@
 .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
 
 /* ---- Ground ---------------------------------------------------------------
-   Without JS every section paints its own background. Once main.js boots,
-   sections go transparent and one fixed layer glides between grounds. */
-.on-ivory    { background-color: var(--ground); }
-.on-midnight { background-color: var(--midnight); color: var(--text); }
-
-.ground {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background-color: var(--ground);
-  transition: background-color 600ms var(--ease-move);
-  pointer-events: none;
-}
-.ground[data-ground="midnight"] { background-color: var(--midnight); }
-
-.booted .on-ivory,
-.booted .on-midnight { background-color: transparent; }
-
+   One warm ground for the whole page (a warm charcoal in dark mode). */
 .scroll-sentinel { position: absolute; top: 24px; left: 0; width: 1px; height: 1px; pointer-events: none; }
 
 /* ---- Containers ------------------------------------------------------------ */
@@ -34,51 +17,30 @@
   margin-inline: auto;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: var(--s-5);
-}
-
 /* ---- Sections -------------------------------------------------------------- */
-.section {
-  position: relative;
-  isolation: isolate;
-  padding-block: var(--section-pad);
-}
+.section { position: relative; padding-block: var(--section-pad); }
 
-/* Faint indigo glow: at the top of ivory sections, the bottom of midnight. */
-.section::before {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  z-index: -1;
-  height: min(70vh, 720px);
-  pointer-events: none;
-}
-.on-ivory.section::before {
-  top: 0;
-  background: radial-gradient(60% 100% at 50% 0%, var(--glow), transparent 72%);
-}
-.on-midnight.section::before {
-  bottom: 0;
-  background: radial-gradient(60% 100% at 50% 100%, var(--glow), transparent 72%);
-}
-
-/* Consecutive sections on the same ground share one long glow. */
-.on-ivory + .on-ivory.section::before,
-.on-midnight + .on-midnight.section::before { opacity: 0.6; }
-
-/* Section heads: one centred column of copy above the visual. */
+/* Section heads: the headline on the left, its supporting copy on the right.
+   Items with an explicit column are auto-placed in order, so a section with
+   or without an eyebrow lays out correctly with no extra markup. */
 .feature__head {
   display: grid;
-  justify-items: center;
-  text-align: center;
-  gap: var(--s-5);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(32px, 6vw, 96px);
+  row-gap: var(--s-4);
+  align-items: start;
 }
-.feature__sub { max-inline-size: 24em; color: var(--text); }
-.feature__body { text-align: center; }
-.feature__visual { margin-top: clamp(56px, 8vw, 112px); }
+.feature__head > .eyebrow { grid-column: 1 / -1; }
+.feature__head > h2 { grid-column: 1; grid-row: span 2; }
+.feature__head > .feature__sub,
+.feature__head > .feature__body { grid-column: 2; }
+.feature__sub { color: var(--text); }
+.feature__visual { margin-top: clamp(40px, 6vw, 72px); }
+
+@media (max-width: 899px) {
+  .feature__head { grid-template-columns: 1fr; }
+  .feature__head > * { grid-column: 1 !important; grid-row: auto !important; }
+}
 
 .eyebrow--mode {
   display: inline-flex;
@@ -103,10 +65,6 @@
   height: var(--nav-h);
   color: var(--text);
 }
-/* Over a midnight section the whole nav switches scheme, so every token in it
-   (text, accent, button) resolves to its dark value. */
-.nav[data-over="midnight"] { color-scheme: dark; --nav-bg: var(--midnight); }
-
 /* The translucent bar is its own layer, so becoming "scrolled" only fades
    opacity instead of animating colours. */
 .nav::before {
@@ -246,50 +204,3 @@
   overflow: hidden;
 }
 .window img { width: 100%; height: 100%; object-fit: cover; }
-
-/* ---- Tilt and parallax ------------------------------------------------------
-   Windows enter with a slight 3D tilt that settles flat as you scroll, and
-   drift by at most 40 px. Where the browser supports scroll-driven
-   animations this is pure CSS; otherwise main.js sets the same variables. */
-.parallax { will-change: transform; }
-
-@media (prefers-reduced-motion: no-preference) {
-  .booted .tilt {
-    transform-origin: 50% 0%;
-    transform: perspective(1800px) rotateX(calc(var(--tilt, 0) * 10deg));
-    transition: transform 1.2s var(--spring-soft);
-  }
-  .booted .parallax { transform: translateY(calc(var(--drift, 0) * 20px)); }
-
-  /* Fallback path (no scroll timelines): main.js toggles .is-flat. */
-  .booted .tilt:not(.is-flat) { --tilt: 1; }
-
-  @supports (animation-timeline: view()) {
-    .booted .tilt {
-      transition: none;
-      animation: tilt-settle linear both;
-      animation-timing-function: var(--spring-soft);
-      animation-timeline: view();
-      animation-range: entry 0% cover 38%;
-    }
-    .booted .parallax {
-      animation: drift linear both;
-      animation-timeline: view();
-      animation-range: cover 0% cover 100%;
-    }
-  }
-}
-
-@keyframes tilt-settle {
-  from { transform: perspective(1800px) rotateX(10deg); }
-  to   { transform: perspective(1800px) rotateX(0deg); }
-}
-@keyframes drift {
-  from { transform: translateY(20px); }
-  to   { transform: translateY(-20px); }
-}
-
-/* Reduced motion: no tilt, no parallax, nothing tied to scroll. */
-@media (prefers-reduced-motion: reduce) {
-  .tilt, .parallax { animation: none !important; transform: none !important; }
-}

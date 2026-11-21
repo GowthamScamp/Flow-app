@@ -63,22 +63,22 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.18e
 code, kbd, samp, pre, .mono { font-family: var(--font-mono); font-size: 0.92em; }
 [hidden] { display: none !important; }
 
-h1, h2, h3, h4 { text-wrap: balance; font-weight: 680; }
+h1, h2, h3, h4 { text-wrap: balance; font-weight: 600; }
 p, li, dd, figcaption { text-wrap: pretty; }
 
 /* ---- Type roles ------------------------------------------------------------ */
 .t-hero {
   font-size: var(--fs-hero);
-  font-weight: 680;
-  letter-spacing: -0.04em;
-  line-height: 0.98;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
 }
 
 .t-section {
   font-size: var(--fs-section);
-  font-weight: 680;
-  letter-spacing: -0.035em;
-  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
 }
 
 .t-sub {
@@ -143,53 +143,21 @@ p, li, dd, figcaption { text-wrap: pretty; }
 /* ---- Reveal states ----------------------------------------------------------
    Everything is visible by default. Two classes on <html> opt in to motion:
    - .js      set by the tiny inline script in <head>, before first paint. It
-              drives only pure-CSS entrances (the hero), which need no script.
+              drives only the pure-CSS hero entrance, which needs no script.
    - .booted  set by main.js once it runs. Scroll reveals wait for it, so a
               script that fails to load never leaves content hidden. */
 
-/* Headline words: each word rises out of its own mask. The extra block padding
-   keeps descenders (g, y, p) inside the mask. */
-.w {
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: top;
-  padding-block: 0.06em 0.14em;
-  margin-block: -0.06em -0.14em;
-}
-.w__i { display: inline-block; }
-
-@keyframes word-rise { from { transform: translateY(110%); } }
-@keyframes soft-rise { from { opacity: 0; transform: translateY(24px); filter: blur(8px); } }
+@keyframes soft-rise { from { opacity: 0; transform: translateY(16px); } }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* Scroll-triggered: main.js adds .is-in when the element is 25 % into view. */
-  .booted [data-words="scroll"]:not(.is-in) .w__i { transform: translateY(110%); }
-  .booted [data-words="scroll"] .w__i {
-    transition: transform 1.1s var(--ease-out);
-    transition-delay: calc(var(--i, 0) * 70ms);
-  }
-
-  .booted .reveal:not(.is-in) {
-    opacity: 0;
-    transform: translateY(24px);
-    filter: blur(8px);
-  }
+  .booted .reveal:not(.is-in) { opacity: 0; transform: translateY(16px); }
   .booted .reveal {
-    transition:
-      opacity 0.9s var(--ease-out),
-      transform 0.9s var(--ease-out),
-      filter 0.9s var(--ease-out);
-    transition-delay: calc(var(--d, 0) * 90ms + 120ms);
-  }
-
-  /* On load (the hero): plays straight from CSS, no script required. */
-  .js [data-words="load"] .w__i {
-    animation: word-rise 1.1s var(--ease-out) both;
-    animation-delay: calc(var(--i, 0) * 70ms + 150ms);
+    transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+    transition-delay: calc(var(--d, 0) * 80ms);
   }
   .js .reveal-load {
-    animation: soft-rise 0.9s var(--ease-out) both;
-    animation-delay: calc(var(--d, 0) * 90ms + 450ms);
+    animation: soft-rise 0.8s var(--ease-out) both;
+    animation-delay: calc(var(--d, 0) * 80ms + 100ms);
   }
 }
 

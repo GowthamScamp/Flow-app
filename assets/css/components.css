@@ -63,7 +63,7 @@
   box-shadow: var(--shadow-window);
 }
 .js .demo__fallback { display: none; }
-html:not(.js) .demo > .parallax { display: none; }
+html:not(.js) .demo > .demo__frame { display: none; }
 
 /* Off-screen or in a hidden tab, a demo freezes, CSS loops included. */
 .demo.is-paused *,
@@ -84,7 +84,6 @@ html:not(.js) .demo > .parallax { display: none; }
   background: color-mix(in srgb, var(--ground) 60%, transparent);
   transition: transform 500ms var(--spring);
 }
-.on-midnight .replay { background: color-mix(in srgb, var(--midnight) 60%, transparent); }
 .replay:hover { color: var(--text); transform: rotate(-30deg); }
 .replay:not([hidden]) { animation: soft-rise 600ms var(--ease-out) both; }
 

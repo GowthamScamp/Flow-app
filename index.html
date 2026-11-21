@@ -111,9 +111,6 @@
 
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- One fixed layer behind everything. Its colour glides between ivory and
-       midnight as dark sections reach the middle of the viewport. -->
-  <div class="ground" aria-hidden="true" data-ground-layer></div>
   <div class="scroll-sentinel" aria-hidden="true" data-scroll-sentinel></div>
 
   <header class="nav" data-nav>
@@ -160,10 +157,10 @@
   <main id="main" tabindex="-1">
 
     <!-- ================================================================ HERO -->
-    <section class="section hero on-ivory" id="top" data-ground="ivory" aria-labelledby="hero-title">
+    <section class="section hero" id="top" aria-labelledby="hero-title">
       <div class="container hero__copy">
         <p class="eyebrow reveal-load" style="--d:0">Flow <span data-config-text="version">2.1.3</span> · Windows and Ubuntu</p>
-        <h1 class="t-hero hero__title" id="hero-title" data-words="load" aria-label="Your AI workspace. On your computer."><span aria-hidden="true"><span class="w"><span class="w__i" style="--i:0">Your</span></span> <span class="w"><span class="w__i" style="--i:1">AI</span></span> <span class="w"><span class="w__i" style="--i:2">workspace.</span></span><br class="hero__br"> <span class="w"><span class="w__i" style="--i:3">On</span></span> <span class="w"><span class="w__i" style="--i:4">your</span></span> <span class="w"><span class="w__i" style="--i:5">computer.</span></span></span></h1>
+        <h1 class="t-hero hero__title reveal-load" id="hero-title" style="--d:1"><span class="hero__line">Your AI workspace.</span> <span class="hero__line">On your computer.</span></h1>
         <p class="t-sub hero__sub reveal-load" style="--d:2">Chat, code and research in one calm desktop app. Run models on your computer with Ollama, or in the cloud with OpenRouter when you choose.</p>
         <div class="hero__actions reveal-load" style="--d:3">
           <a class="btn btn--primary btn--large" href="#download" data-os-button="windows">
@@ -179,18 +176,10 @@
         <p class="hero__os-note reveal-load" style="--d:4" data-os-note hidden>Flow is available for Windows and Ubuntu.</p>
       </div>
 
-      <div class="hero__visual">
-        <!-- Flow's three-wave motif, drawn once behind the window. -->
-        <svg class="hero__waves" viewBox="0 0 1600 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-          <path pathLength="1" d="M-40 140 C 160 40, 300 40, 500 140 S 840 240, 1040 140 S 1380 40, 1640 140"/>
-          <path pathLength="1" d="M-40 210 C 160 110, 300 110, 500 210 S 840 310, 1040 210 S 1380 110, 1640 210"/>
-          <path pathLength="1" d="M-40 280 C 160 180, 300 180, 500 280 S 840 380, 1040 280 S 1380 180, 1640 280"/>
-        </svg>
-        <div class="container">
-          <div class="parallax" data-parallax>
-            <div class="window window--hero tilt" data-tilt>
-              <div class="hero-shot">
-                <picture>
+      <div class="container hero__visual reveal-load" style="--d:5">
+        <div class="window window--hero">
+          <div class="hero-shot">
+            <picture>
                   <source data-dark media="(prefers-color-scheme: dark)" type="image/webp"
                     srcset="./assets/img/home-dark-640.webp 640w, ./assets/img/home-dark-1024.webp 1024w, ./assets/img/home-dark-1600.webp 1600w, ./assets/img/home-dark-2400.webp 2400w"
                     sizes="(max-width: 700px) 175vw, (min-width: 1328px) 1200px, 92vw">
@@ -200,92 +189,82 @@
                     width="3200" height="1720" fetchpriority="high" decoding="async"
                     alt="Flow's Home screen asking “What would you like to work on?”, with three mode cards, Chat, Coding Assistant and Research Assistant, above a list of recent work.">
                 </picture>
-                <!-- Glow overlays aligned to the three mode cards in the screenshot. -->
-                <span class="hero-glow hero-glow--chat" aria-hidden="true"></span>
-                <span class="hero-glow hero-glow--code" aria-hidden="true"></span>
-                <span class="hero-glow hero-glow--research" aria-hidden="true"></span>
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- =============================================================== MODES -->
-    <section class="section modes on-ivory" id="modes" data-ground="ivory" data-spy-section="modes" aria-labelledby="modes-title">
+    <section class="section modes" id="modes" data-spy-section="modes" aria-labelledby="modes-title">
       <div class="container">
-        <h2 class="t-section modes__title" id="modes-title" data-words="scroll">Three modes. One workspace.</h2>
-      </div>
-      <div class="modes__track" data-modes>
-        <div class="modes__stage container">
-          <ol class="modes__list" role="list">
+        <h2 class="t-section reveal" id="modes-title">Three modes. One workspace.</h2>
+        <ol class="modes__list" role="list">
             <li class="mode" data-mode="chat">
-              <div class="mode__text">
-                <h3 class="mode__name">Chat</h3>
-                <p class="mode__desc">Think out loud, draft, and explore ideas.</p>
-                <p class="mode__line">Reasoning when you want it.</p>
-              </div>
-              <div class="mode__shot window">
+              <div class="mode__shot">
                 <picture>
                   <source data-dark media="(prefers-color-scheme: dark)" type="image/webp"
                     srcset="./assets/img/mode-chat-dark-640.webp 640w, ./assets/img/mode-chat-dark-1024.webp 1024w, ./assets/img/mode-chat-dark-1600.webp 1600w, ./assets/img/mode-chat-dark-1692.webp 1692w"
-                    sizes="(max-width: 899px) 92vw, 680px">
+                    sizes="(min-width: 900px) 380px, 92vw">
                   <img src="./assets/img/mode-chat-light-1024.webp"
                     srcset="./assets/img/mode-chat-light-640.webp 640w, ./assets/img/mode-chat-light-1024.webp 1024w, ./assets/img/mode-chat-light-1600.webp 1600w, ./assets/img/mode-chat-light-1692.webp 1692w"
-                    sizes="(max-width: 899px) 92vw, 680px"
+                    sizes="(min-width: 900px) 380px, 92vw"
                     width="1692" height="1168" loading="lazy" decoding="async"
                     alt="A Chat conversation in Flow: a question about hash map collisions, an expanded Thought card with the model's reasoning, and the start of the answer.">
                 </picture>
               </div>
+              <div class="mode__text">
+                <h3 class="mode__name"><a href="#chat">Chat</a></h3>
+                <p class="mode__desc">Think out loud, draft, and explore ideas.</p>
+                <p class="mode__line">Reasoning when you want it.</p>
+              </div>
             </li>
             <li class="mode" data-mode="code">
-              <div class="mode__text">
-                <h3 class="mode__name">Code</h3>
-                <p class="mode__desc">Explore, edit, run, and verify projects.</p>
-                <p class="mode__line">Edits only after you approve.</p>
-              </div>
-              <div class="mode__shot window">
+              <div class="mode__shot">
                 <picture>
                   <source data-dark media="(prefers-color-scheme: dark)" type="image/webp"
                     srcset="./assets/img/mode-code-dark-640.webp 640w, ./assets/img/mode-code-dark-1024.webp 1024w, ./assets/img/mode-code-dark-1533.webp 1533w"
-                    sizes="(max-width: 899px) 92vw, 680px">
+                    sizes="(min-width: 900px) 380px, 92vw">
                   <img src="./assets/img/mode-code-light-1024.webp"
                     srcset="./assets/img/mode-code-light-640.webp 640w, ./assets/img/mode-code-light-1024.webp 1024w, ./assets/img/mode-code-light-1533.webp 1533w"
-                    sizes="(max-width: 899px) 92vw, 680px"
+                    sizes="(min-width: 900px) 380px, 92vw"
                     width="1533" height="1058" loading="lazy" decoding="async"
                     alt="Flow's Coding Assistant after a task: it read 2 files, ran 2 code searches and edited src/forms/signup.ts, then summarised what changed.">
                 </picture>
               </div>
+              <div class="mode__text">
+                <h3 class="mode__name"><a href="#code">Code</a></h3>
+                <p class="mode__desc">Explore, edit, run, and verify projects.</p>
+                <p class="mode__line">Edits only after you approve.</p>
+              </div>
             </li>
             <li class="mode" data-mode="research">
-              <div class="mode__text">
-                <h3 class="mode__name">Research</h3>
-                <p class="mode__desc">Investigate questions, evaluate sources, and create reports.</p>
-                <p class="mode__line">Every claim cited and checked.</p>
-              </div>
-              <div class="mode__shot window">
+              <div class="mode__shot">
                 <picture>
                   <source data-dark media="(prefers-color-scheme: dark)" type="image/webp"
                     srcset="./assets/img/mode-research-dark-640.webp 640w, ./assets/img/mode-research-dark-1024.webp 1024w, ./assets/img/mode-research-dark-1534.webp 1534w"
-                    sizes="(max-width: 899px) 92vw, 680px">
+                    sizes="(min-width: 900px) 380px, 92vw">
                   <img src="./assets/img/mode-research-light-1024.webp"
                     srcset="./assets/img/mode-research-light-640.webp 640w, ./assets/img/mode-research-light-1024.webp 1024w, ./assets/img/mode-research-light-1534.webp 1534w"
-                    sizes="(max-width: 899px) 92vw, 680px"
+                    sizes="(min-width: 900px) 380px, 92vw"
                     width="1534" height="1058" loading="lazy" decoding="async"
                     alt="A Research answer in Flow comparing the James Webb and Hubble telescopes, with numbered citations and a line saying 3 of 3 cited statements match the evidence they cite.">
                 </picture>
               </div>
+              <div class="mode__text">
+                <h3 class="mode__name"><a href="#research">Research</a></h3>
+                <p class="mode__desc">Investigate questions, evaluate sources, and create reports.</p>
+                <p class="mode__line">Every claim cited and checked.</p>
+              </div>
             </li>
-          </ol>
-        </div>
+        </ol>
       </div>
     </section>
 
     <!-- ================================================================ CHAT -->
-    <section class="section feature on-ivory" id="chat" data-ground="ivory" data-spy-section="modes" aria-labelledby="chat-title">
+    <section class="section feature" id="chat" data-spy-section="modes" aria-labelledby="chat-title">
       <div class="container feature__head">
         <p class="eyebrow eyebrow--mode reveal" style="--mode: var(--chat)">Chat</p>
-        <h2 class="t-section" id="chat-title" data-words="scroll">Think it.</h2>
+        <h2 class="t-section reveal" id="chat-title">Think it.</h2>
         <p class="t-sub feature__sub reveal" style="--d:1">Reasoning when you want it. A clean answer, always.</p>
         <p class="t-body feature__body reveal" style="--d:2">Turn on Think and Flow shows the model's reasoning in a collapsed Thought card, kept apart from the answer. Answers come back with headings, lists, code blocks and tables.</p>
       </div>
@@ -293,8 +272,8 @@
       <div class="container feature__visual">
         <div class="demo demo--chat" data-demo="chat">
           <p class="vh">Animated example of Chat mode. A question is typed: “Explain how a hash map handles collisions, simply, with a tiny example.” With Think on, Flow first shows its reasoning in a Thought card, then collapses it and streams the answer: a heading, a short paragraph, a numbered list of two approaches, a small Python code example and a comparison table.</p>
-          <div class="parallax" data-parallax>
-            <div class="window app chat-app tilt" data-tilt aria-hidden="true">
+          <div class="demo__frame">
+            <div class="window app chat-app" aria-hidden="true">
               <div class="app-bar">
                 <svg class="app-bar__icon" width="16" height="16"><use href="#i-back"/></svg>
                 <span class="pill pill--chat">CHAT</span>
@@ -402,10 +381,10 @@
     </section>
 
     <!-- ================================================================ CODE -->
-    <section class="section feature on-midnight" id="code" data-ground="midnight" data-spy-section="code" aria-labelledby="code-title">
+    <section class="section feature" id="code" data-spy-section="code" aria-labelledby="code-title">
       <div class="container feature__head">
         <p class="eyebrow eyebrow--mode reveal" style="--mode: var(--code)">Code</p>
-        <h2 class="t-section" id="code-title" data-words="scroll">Build it.</h2>
+        <h2 class="t-section reveal" id="code-title">Build it.</h2>
         <p class="t-sub feature__sub reveal" style="--d:1">It edits your project. Only after you approve.</p>
         <p class="t-body feature__body reveal" style="--d:2">The coding agent reads and searches your project, then proposes edits. Every edit opens a Review needed dialog: approve it, reject it, approve the whole turn, or allow it for the session. Changes show as diffs you can revert, or roll back a whole turn.</p>
       </div>
@@ -413,8 +392,8 @@
       <div class="container feature__visual">
         <div class="demo demo--review" data-demo="review">
           <p class="vh">Interactive demo of Flow's Review needed dialog. This is only a demo: no real file is touched. The coding agent has read 2 files, run 2 code searches and proposed an edit to src/forms/signup.ts. The edit trims the email and checks it with the existing isEmail helper, asks for passwords of at least 12 characters and a name, and replaces two bare “Required” messages with clear ones. Choose Approve to apply it, or Reject to discard it.</p>
-          <div class="parallax" data-parallax>
-            <div class="window app review-app tilt" data-tilt>
+          <div class="demo__frame">
+            <div class="window app review-app">
               <div class="review-app__frame" aria-hidden="true" data-review-frame>
                 <div class="app-bar">
                   <svg class="app-bar__icon" width="16" height="16"><use href="#i-back"/></svg>
@@ -540,17 +519,17 @@
     </section>
 
     <!-- ============================================================ CODE MAP -->
-    <section class="section feature on-midnight" id="code-map" data-ground="midnight" data-spy-section="code" aria-labelledby="map-title">
+    <section class="section feature" id="code-map" data-spy-section="code" aria-labelledby="map-title">
       <div class="container feature__head">
-        <h2 class="t-section" id="map-title" data-words="scroll">See how it fits together.</h2>
+        <h2 class="t-section reveal" id="map-title">See how it fits together.</h2>
         <p class="t-sub feature__sub reveal" style="--d:1">A live map of your whole codebase.</p>
         <p class="t-body feature__body reveal" style="--d:2">The code graph maps your project as an interactive map. Hover a file to see what it connects to.</p>
       </div>
 
       <div class="container feature__visual">
         <figure class="demo demo--map" data-demo="codemap">
-          <div class="parallax" data-parallax>
-            <div class="window app map-app tilt" data-tilt>
+          <div class="demo__frame">
+            <div class="window app map-app">
               <div class="map-bar" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="3" r="1.8" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="3" cy="12.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="13" cy="12.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M7 4.6 4 11M9 4.6l3 6.4M4.8 12.5h6.4" stroke="currentColor" stroke-width="1.2"/></svg>
                 <span class="map-bar__title">Code map</span>
@@ -579,10 +558,10 @@
     </section>
 
     <!-- ============================================================ RESEARCH -->
-    <section class="section feature on-ivory" id="research" data-ground="ivory" data-spy-section="research" aria-labelledby="research-title">
+    <section class="section feature" id="research" data-spy-section="research" aria-labelledby="research-title">
       <div class="container feature__head">
         <p class="eyebrow eyebrow--mode reveal" style="--mode: var(--research)">Research</p>
-        <h2 class="t-section" id="research-title" data-words="scroll">Know it.</h2>
+        <h2 class="t-section reveal" id="research-title">Know it.</h2>
         <p class="t-sub feature__sub reveal" style="--d:1">Reads the sources. Cites every claim. Checks them.</p>
         <p class="t-body feature__body reveal" style="--d:2">Flow searches the web, reads the sources, and writes an answer where every claim cites its source. Cited claims are checked against the sources automatically.</p>
       </div>
@@ -590,8 +569,8 @@
       <div class="container feature__visual">
         <div class="demo demo--cite" data-demo="citations">
           <p class="vh">Example of a Research answer. Each citation number links to one of three sources listed beside the answer; focus a citation to highlight its source.</p>
-          <div class="parallax" data-parallax>
-            <div class="window app cite-app tilt" data-tilt>
+          <div class="demo__frame">
+            <div class="window app cite-app">
               <div class="app-bar" aria-hidden="true">
                 <svg class="app-bar__icon" width="16" height="16"><use href="#i-back"/></svg>
                 <span class="pill pill--research">RESEARCH</span>
@@ -685,17 +664,17 @@
     </section>
 
     <!-- =============================================================== LOCAL -->
-    <section class="section feature local on-midnight" id="local" data-ground="midnight" data-spy-section="local" aria-labelledby="local-title">
+    <section class="section feature local" id="local" data-spy-section="local" aria-labelledby="local-title">
       <div class="container feature__head">
-        <h2 class="t-section" id="local-title" data-words="scroll">Runs on your computer.</h2>
+        <h2 class="t-section reveal" id="local-title">Runs on your computer.</h2>
         <p class="t-sub feature__sub reveal" style="--d:1">Local models with Ollama. Cloud models with OpenRouter, when you choose.</p>
         <p class="t-body feature__body reveal" style="--d:2">Pick a model you've installed in Ollama and it runs on this computer. Prefer the cloud? Add an OpenRouter key; Flow keeps it in your operating system's credential store.</p>
       </div>
 
       <div class="container feature__visual">
         <figure class="onboard">
-          <div class="parallax" data-parallax>
-            <div class="onboard__card app tilt" data-tilt aria-hidden="true">
+          <div class="demo__frame">
+            <div class="onboard__card app" aria-hidden="true">
               <div class="onboard__logo"><svg width="28" height="28"><use href="#flow-icon"/></svg><span class="mono">Flow</span></div>
               <div class="onboard__steps"><i class="is-on"></i><i></i><i></i></div>
               <p class="onboard__step">Step 1 · Model provider</p>
@@ -712,31 +691,22 @@
 
         <div class="models">
           <p class="models__label reveal">For example, with models from the Ollama library.</p>
-          <div class="marquee reveal" style="--d:1">
-            <ul class="marquee__track" role="list" aria-label="Example models">
+          <ul class="chips reveal" style="--d:1" role="list" aria-label="Example models">
               <li class="model-chip"><i class="dot"></i>qwen3.6:27b</li>
               <li class="model-chip"><i class="dot"></i>qwen3-coder:30b</li>
               <li class="model-chip"><i class="dot"></i>gemma4:31b</li>
               <li class="model-chip"><i class="dot"></i>deepseek-r1:32b</li>
               <li class="model-chip"><i class="dot"></i>nemotron-3.5-lightning:30b</li>
               <li class="model-chip"><i class="dot"></i>qwen3:30b</li>
-              <!-- The same chips again, so the loop is seamless. Hidden from assistive tech. -->
-              <li class="model-chip" aria-hidden="true"><i class="dot"></i>qwen3.6:27b</li>
-              <li class="model-chip" aria-hidden="true"><i class="dot"></i>qwen3-coder:30b</li>
-              <li class="model-chip" aria-hidden="true"><i class="dot"></i>gemma4:31b</li>
-              <li class="model-chip" aria-hidden="true"><i class="dot"></i>deepseek-r1:32b</li>
-              <li class="model-chip" aria-hidden="true"><i class="dot"></i>nemotron-3.5-lightning:30b</li>
-              <li class="model-chip" aria-hidden="true"><i class="dot"></i>qwen3:30b</li>
             </ul>
-          </div>
         </div>
       </div>
     </section>
 
     <!-- ================================================================ FILM -->
-    <section class="section film on-midnight" id="film" data-ground="midnight" aria-labelledby="film-title">
+    <section class="section film" id="film" aria-labelledby="film-title">
       <div class="container feature__head">
-        <h2 class="t-section" id="film-title" data-words="scroll">One minute with Flow.</h2>
+        <h2 class="t-section reveal" id="film-title">One minute with Flow.</h2>
       </div>
       <div class="container feature__visual">
         <div class="player reveal" data-player>
@@ -751,9 +721,9 @@
     </section>
 
     <!-- ============================================================ DOWNLOAD -->
-    <section class="section download on-ivory" id="download" data-ground="ivory" data-spy-section="download" aria-labelledby="download-title">
+    <section class="section download" id="download" data-spy-section="download" aria-labelledby="download-title">
       <div class="container feature__head">
-        <h2 class="t-section" id="download-title" data-words="scroll">Get Flow.</h2>
+        <h2 class="t-section reveal" id="download-title">Get Flow.</h2>
         <p class="t-sub feature__sub reveal" style="--d:1">Free to use. For Windows and Ubuntu.</p>
       </div>
 
@@ -833,9 +803,9 @@
     </section>
 
     <!-- ================================================================= FAQ -->
-    <section class="section faq on-ivory" id="faq" data-ground="ivory" aria-labelledby="faq-title">
+    <section class="section faq" id="faq" aria-labelledby="faq-title">
       <div class="container faq__grid">
-        <h2 class="t-section faq__title" id="faq-title" data-words="scroll">Questions.</h2>
+        <h2 class="t-section reveal faq__title" id="faq-title">Questions.</h2>
         <div class="faq__list">
           <details class="faq__item reveal">
             <summary><h3>Is Flow free?</h3><span class="faq__icon" aria-hidden="true"></span></summary>
@@ -867,9 +837,9 @@
   </main>
 
   <!-- ============================================================== FOOTER -->
-  <footer class="footer on-midnight" data-ground="midnight">
+  <footer class="footer">
     <div class="container">
-      <p class="footer__line" data-words="scroll">Chat. Code. Research. <em>In flow.</em></p>
+      <p class="footer__line reveal">Chat. Code. Research. <em>In flow.</em></p>
       <div class="footer__row">
         <a class="lockup footer__brand" href="#top" aria-label="Flow, back to top">
           <svg class="lockup__icon" width="28" height="28" aria-hidden="true"><use href="#flow-icon"/></svg>
