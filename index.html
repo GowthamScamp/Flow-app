@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flow: your AI workspace, on your computer</title>
+  <meta name="description" content="Flow is a free, local-first AI workspace for Windows and Ubuntu. Chat, code and research in one calm desktop app, with models on your computer through Ollama or in the cloud through OpenRouter.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#F6F2EA" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121214" media="(prefers-color-scheme: dark)">
+
+  <!-- Absolute URLs below are written from assets/js/config.js by tools/apply-config.mjs. -->
+  <link rel="canonical" href="https://TODO-user.github.io/TODO-repo/" data-config-href="baseUrl">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Flow">
+  <meta property="og:title" content="Flow: your AI workspace, on your computer">
+  <meta property="og:description" content="Chat, code and research in one calm desktop app. Free to use, for Windows and Ubuntu.">
+  <meta property="og:url" content="https://TODO-user.github.io/TODO-repo/" data-config-content="baseUrl">
+  <meta property="og:image" content="https://TODO-user.github.io/TODO-repo/assets/img/og-1280x720.jpg" data-config-content="ogImage">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="720">
+  <meta property="og:image:alt" content="Flow, your AI workspace on your computer.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Flow: your AI workspace, on your computer">
+  <meta name="twitter:description" content="Chat, code and research in one calm desktop app. Free to use, for Windows and Ubuntu.">
+  <meta name="twitter:image" content="https://TODO-user.github.io/TODO-repo/assets/img/og-1280x720.jpg" data-config-content="ogImage">
+
+  <link rel="icon" href="./assets/icons/flow-icon.svg" type="image/svg+xml">
+  <link rel="icon" href="./assets/icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="./site.webmanifest">
+
+  <link rel="preload" href="./assets/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- Runs before first paint: marks that JS is available (for the CSS-only
+       hero entrance) and applies a saved theme so the page never flashes the
+       wrong one. Everything else lives in assets/js/main.js. -->
+  <script>
+    (function () {
+      var root = document.documentElement;
+      root.classList.add("js");
+      try {
+        var theme = localStorage.getItem("flow-theme");
+        if (theme === "light" || theme === "dark") root.setAttribute("data-theme", theme);
+      } catch (e) { /* storage blocked: follow the OS preference */ }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="./assets/css/tokens.css">
+  <link rel="stylesheet" href="./assets/css/base.css">
+  <link rel="stylesheet" href="./assets/css/layout.css">
+  <link rel="stylesheet" href="./assets/css/components.css">
+  <link rel="stylesheet" href="./assets/css/sections.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Flow",
+    "softwareVersion": "2.1.3",
+    "operatingSystem": "Windows, Ubuntu",
+    "applicationCategory": "ProductivityApplication",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+
+  <script type="module" src="./assets/js/main.js"></script>
+</head>
+<body>
+  <!-- The Flow icon, defined once and reused with <use>. Geometry and colours
+       are exactly the brand SVG; only the gradient id is namespaced. -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="flow-tile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#4338ca"/></linearGradient>
+    </defs>
+    <symbol id="flow-icon" viewBox="0 0 512 512">
+      <rect width="512" height="512" rx="112" fill="url(#flow-tile)"/>
+      <path d="M120 184C170.32 136 205.68 136 256 184S341.68 232 392 184" fill="none" stroke="#c7d2fe" stroke-width="34" stroke-linecap="round"/>
+      <path d="M120 256C170.32 208 205.68 208 256 256S341.68 304 392 256" fill="none" stroke="#ffffff" stroke-width="34" stroke-linecap="round"/>
+      <path d="M120 328C170.32 280 205.68 280 256 328S341.68 376 392 328" fill="none" stroke="#a5b4fc" stroke-width="34" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="glyph-windows" viewBox="0 0 16 16">
+      <path d="M1.5 2.6 6.9 1.9v5.4H1.5zM7.9 1.75 14.5.9v6.4H7.9zM1.5 8.3h5.4v5.4l-5.4-.7zM7.9 8.3h6.6v6.4l-6.6-.85z" fill="currentColor"/>
+    </symbol>
+    <symbol id="glyph-ubuntu" viewBox="0 0 16 16">
+      <circle cx="8" cy="8" r="4.6" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      <circle cx="8" cy="2.4" r="1.9" fill="currentColor"/>
+      <circle cx="3.15" cy="10.8" r="1.9" fill="currentColor"/>
+      <circle cx="12.85" cy="10.8" r="1.9" fill="currentColor"/>
+    </symbol>
+    <symbol id="i-replay" viewBox="0 0 20 20">
+      <path d="M4.2 10a5.8 5.8 0 1 0 1.7-4.1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M5.4 2.6v3.6H9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-chevron" viewBox="0 0 16 16">
+      <path d="m6 3.5 4.5 4.5L6 12.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-back" viewBox="0 0 16 16">
+      <path d="M13 8H3.5M7.5 3.5 3 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-search" viewBox="0 0 16 16">
+      <circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 16 16">
+      <path d="m3.5 8.4 3 3 6-6.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-brain" viewBox="0 0 16 16">
+      <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 2v12M5 5.2c1.3.4 1.6 1.6 1.2 2.8M11 5.2c-1.3.4-1.6 1.6-1.2 2.8M4.6 10.4c1-.6 2.3-.5 3.4.3M11.4 10.4c-1-.6-2.3-.5-3.4.3" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    </symbol>
+  </svg>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- One fixed layer behind everything. Its colour glides between ivory and
+       midnight as dark sections reach the middle of the viewport. -->
+  <div class="ground" aria-hidden="true" data-ground-layer></div>
+  <div class="scroll-sentinel" aria-hidden="true" data-scroll-sentinel></div>
+
+  <header class="nav" data-nav>
+    <div class="nav__inner">
+      <a class="lockup nav__brand" href="#top" aria-label="Flow, back to top">
+        <svg class="lockup__icon" width="24" height="24" aria-hidden="true"><use href="#flow-icon"/></svg>
+        <span class="lockup__word">Flow</span>
+      </a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#modes" data-spy="modes">Modes</a>
+        <a href="#code" data-spy="code">Code</a>
+        <a href="#research" data-spy="research">Research</a>
+        <a href="#local" data-spy="local">Local</a>
+        <a href="#download" data-spy="download">Download</a>
+      </nav>
+      <div class="nav__end">
+        <a class="btn btn--primary btn--small" href="#download">Download</a>
+        <button class="nav__menu" type="button" aria-haspopup="dialog" aria-controls="nav-sheet" aria-label="Open menu" data-menu-open>
+          <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M3 7h14M3 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <dialog class="sheet" id="nav-sheet" aria-label="Menu" data-menu>
+    <div class="sheet__top">
+      <span class="lockup">
+        <svg class="lockup__icon" width="24" height="24" aria-hidden="true"><use href="#flow-icon"/></svg>
+        <span class="lockup__word">Flow</span>
+      </span>
+      <button class="sheet__close" type="button" aria-label="Close menu" data-menu-close>
+        <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <nav class="sheet__links" aria-label="Menu">
+      <a href="#modes">Modes</a>
+      <a href="#code">Code</a>
+      <a href="#research">Research</a>
+      <a href="#local">Local</a>
+      <a href="#download">Download</a>
+    </nav>
+  </dialog>
+
+  <main id="main" tabindex="-1">
+
+    <!-- ================================================================ HERO -->
+    <section class="section hero on-ivory" id="top" data-ground="ivory" aria-labelledby="hero-title">
+      <div class="container hero__copy">
+        <p class="eyebrow reveal-load" style="--d:0">Flow <span data-config-text="version">2.1.3</span> · Windows and Ubuntu</p>
+        <h1 class="t-hero hero__title" id="hero-title" data-words="load" aria-label="Your AI workspace. On your computer."><span aria-hidden="true"><span class="w"><span class="w__i" style="--i:0">Your</span></span> <span class="w"><span class="w__i" style="--i:1">AI</span></span> <span class="w"><span class="w__i" style="--i:2">workspace.</span></span><br class="hero__br"> <span class="w"><span class="w__i" style="--i:3">On</span></span> <span class="w"><span class="w__i" style="--i:4">your</span></span> <span class="w"><span class="w__i" style="--i:5">computer.</span></span></span></h1>
+        <p class="t-sub hero__sub reveal-load" style="--d:2">Chat, code and research in one calm desktop app. Run models on your computer with Ollama, or in the cloud with OpenRouter when you choose.</p>
+        <div class="hero__actions reveal-load" style="--d:3">
+          <a class="btn btn--primary btn--large" href="#download" data-os-button="windows">
+            <svg width="16" height="16" aria-hidden="true"><use href="#glyph-windows"/></svg>
+            Download for Windows
+          </a>
+          <a class="btn btn--primary btn--large" href="#download" data-os-button="ubuntu">
+            <svg width="16" height="16" aria-hidden="true"><use href="#glyph-ubuntu"/></svg>
+            Download for Ubuntu
+          </a>
+          <a class="btn btn--ghost btn--large" href="#film" data-film-open>
+            <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3.5 2.2v9.6L11.4 7z" fill="currentColor"/></svg>
+            Watch the film · 1 min
+          </a>
+        </div>
+        <p class="hero__fine reveal-load" style="--d:4">Free to use.</p>
+        <p class="hero__os-note reveal-load" style="--d:4" data-os-note hidden>Flow is available for Windows and Ubuntu.</p>
+      </div>
+
+      <div class="hero__visual">
+        <!-- Flow's three-wave motif, drawn once behind the window. -->
+        <svg class="hero__waves" viewBox="0 0 1600 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <path pathLength="1" d="M-40 140 C 160 40, 300 40, 500 140 S 840 240, 1040 140 S 1380 40, 1640 140"/>
+          <path pathLength="1" d="M-40 210 C 160 110, 300 110, 500 210 S 840 310, 1040 210 S 1380 110, 1640 210"/>
+          <path pathLength="1" d="M-40 280 C 160 180, 300 180, 500 280 S 840 380, 1040 280 S 1380 180, 1640 280"/>
+        </svg>
+        <div class="container">
+          <div class="parallax" data-parallax>
+            <div class="window window--hero tilt" data-tilt>
+              <div class="hero-shot">
+                <picture>
+                  <source data-dark media="(prefers-color-scheme: dark)" type="image/webp"
+                    srcset="./assets/img/home-dark-640.webp 640w, ./assets/img/home-dark-1024.webp 1024w, ./assets/img/home-dark-1600.webp 1600w, ./assets/img/home-dark-2400.webp 2400w"
+                    sizes="(max-width: 700px) 175vw, (min-width: 1328px) 1200px, 92vw">
+                  <img src="./assets/img/home-light-1600.webp"
+                    srcset="./assets/img/home-light-640.webp 640w, ./assets/img/home-light-1024.webp 1024w, ./assets/img/home-light-1600.webp 1600w, ./assets/img/home-light-2400.webp 2400w"
+                    sizes="(max-width: 700px) 175vw, (min-width: 1328px) 1200px, 92vw"
+                    width="3200" height="1720" fetchpriority="high" decoding="async"
+                    alt="Flow's Home screen asking “What would you like to work on?”, with three mode cards, Chat, Coding Assistant and Research Assistant, above a list of recent work.">
+                </picture>
+                <!-- Glow overlays aligned to the three mode cards in the screenshot. -->
+                <span class="hero-glow hero-glow--chat" aria-hidden="true"></span>
+                <span class="hero-glow hero-glow--code" aria-hidden="true"></span>
+                <span class="hero-glow hero-glow--research" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================================================== MODES -->
+    <section class="section modes on-ivory" id="modes" data-ground="ivory" data-spy-section="modes" aria-labelledby="modes-title">
+      <div class="container">
+        <h2 class="t-section modes__title" id="modes-title" data-words="scroll">Three modes. One workspace.</h2>
+      </div>
+      <div class="modes__track" data-modes>
+        <div class="modes__stage container">
+          <ol class="modes__list" role="list">
+            <li class="mode" data-mode="chat">
+              <div class="mode__text">
+                <h3 class="mode__name">Chat</h3>
+                <p class="mode__desc">Think out loud, draft, and explore ideas.</p>
+                <p class="mode__line">Reasoning when you want it.</p>
+              </div>
+              <div class="mode__shot window">
+                <picture>
+                  <source data-dark media="(prefers-color-scheme: dark)" type="image/webp"
+                    srcset="./assets/img/mode-chat-dark-640.webp 640w, ./assets/img/mode-chat-dark-1024.webp 1024w, ./assets/img/mode-chat-dark-1600.webp 1600w, ./assets/img/mode-chat-dark-1692.webp 1692w"
+                    sizes="(max-width: 899px) 92vw, 680px">
+                  <img src="./assets/img/mode-chat-light-1024.webp"
+                    srcset="./assets/img/mode-chat-light-640.webp 640w, ./assets/img/mode-chat-light-1024.webp 1024w, ./assets/img/mode-chat-light-1600.webp 1600w, ./assets/img/mode-chat-light-1692.webp 1692w"
+                    sizes="(max-width: 899px) 92vw, 680px"
+                    width="1692" height="1168" loading="lazy" decoding="async"
+                    alt="A Chat conversation in Flow: a question about hash map collisions, an expanded Thought card with the model's reasoning, and the start of the answer.">
+                </picture>
+              </div>
+            </li>
+            <li class="mode" data-mode="code">
+              <div class="mode__text">
+                <h3 class="mode__name">Code</h3>
+                <p class="mode__desc">Explore, edit, run, and verify projects.</p>
+                <p class="mode__line">Edits only after you approve.</p>
+              </div>
+              <div class="mode__shot window">
+                <picture>
+                  <source data-dark media="(prefers-color-scheme: dark)" type="image/webp"
+                    srcset="./assets/img/mode-code-dark-640.webp 640w, ./assets/img/mode-code-dark-1024.webp 1024w, ./assets/img/mode-code-dark-1533.webp 1533w"
+                    sizes="(max-width: 899px) 92vw, 680px">
+                  <img src="./assets/img/mode-code-light-1024.webp"
+                    srcset="./assets/img/mode-code-light-640.webp 640w, ./assets/img/mode-code-light-1024.webp 1024w, ./assets/img/mode-code-light-1533.webp 1533w"
+                    sizes="(max-width: 899px) 92vw, 680px"
+                    width="1533" height="1058" loading="lazy" decoding="async"
+                    alt="Flow's Coding Assistant after a task: it read 2 files, ran 2 code searches and edited src/forms/signup.ts, then summarised what changed.">
+                </picture>
+              </div>
+            </li>
+            <li class="mode" data-mode="research">
+              <div class="mode__text">
+                <h3 class="mode__name">Research</h3>
+                <p class="mode__desc">Investigate questions, evaluate sources, and create reports.</p>
+                <p class="mode__line">Every claim cited and checked.</p>
+              </div>
+              <div class="mode__shot window">
+                <picture>
+                  <source data-dark media="(prefers-color-scheme: dark)" type="image/webp"
+                    srcset="./assets/img/mode-research-dark-640.webp 640w, ./assets/img/mode-research-dark-1024.webp 1024w, ./assets/img/mode-research-dark-1534.webp 1534w"
+                    sizes="(max-width: 899px) 92vw, 680px">
+                  <img src="./assets/img/mode-research-light-1024.webp"
+                    srcset="./assets/img/mode-research-light-640.webp 640w, ./assets/img/mode-research-light-1024.webp 1024w, ./assets/img/mode-research-light-1534.webp 1534w"
+                    sizes="(max-width: 899px) 92vw, 680px"
+                    width="1534" height="1058" loading="lazy" decoding="async"
+                    alt="A Research answer in Flow comparing the James Webb and Hubble telescopes, with numbered citations and a line saying 3 of 3 cited statements match the evidence they cite.">
+                </picture>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ CHAT -->
+    <section class="section feature on-ivory" id="chat" data-ground="ivory" data-spy-section="modes" aria-labelledby="chat-title">
+      <div class="container feature__head">
+        <p class="eyebrow eyebrow--mode reveal" style="--mode: var(--chat)">Chat</p>
+        <h2 class="t-section" id="chat-title" data-words="scroll">Think it.</h2>
+        <p class="t-sub feature__sub reveal" style="--d:1">Reasoning when you want it. A clean answer, always.</p>
+        <p class="t-body feature__body reveal" style="--d:2">Turn on Think and Flow shows the model's reasoning in a collapsed Thought card, kept apart from the answer. Answers come back with headings, lists, code blocks and tables.</p>
+      </div>
+
+      <div class="container feature__visual">
+        <div class="demo demo--chat" data-demo="chat">
+          <p class="vh">Animated example of Chat mode. A question is typed: “Explain how a hash map handles collisions, simply, with a tiny example.” With Think on, Flow first shows its reasoning in a Thought card, then collapses it and streams the answer: a heading, a short paragraph, a numbered list of two approaches, a small Python code example and a comparison table.</p>
+          <div class="parallax" data-parallax>
+            <div class="window app chat-app tilt" data-tilt aria-hidden="true">
+              <div class="app-bar">
+                <svg class="app-bar__icon" width="16" height="16"><use href="#i-back"/></svg>
+                <span class="pill pill--chat">CHAT</span>
+                <span class="app-bar__spacer"></span>
+                <span class="app-search"><svg width="14" height="14"><use href="#i-search"/></svg>Search<kbd>Ctrl K</kbd></span>
+              </div>
+              <div class="chat-app__body">
+                <div class="app-side">
+                  <div class="app-side__brand"><svg width="18" height="18"><use href="#flow-icon"/></svg><b>Flow</b></div>
+                  <div class="app-tabs"><span class="app-tabs__home">⌂</span><span class="is-on">Chat</span><span>Research</span><span>Code</span></div>
+                  <div class="app-side__new"><span>+ New conversation</span><kbd>Ctrl N</kbd></div>
+                  <div class="app-side__search"><svg width="13" height="13"><use href="#i-search"/></svg>Search</div>
+                  <p class="app-side__label">Recents</p>
+                  <p class="app-side__day">Today</p>
+                  <div class="app-side__item"><b>TCP vs UDP</b><span><i class="pill pill--chat pill--tiny">CHAT</i> 2 messages</span></div>
+                  <div class="app-side__item is-on"><b>Hash map collisions, sim…</b><span><i class="pill pill--chat pill--tiny">CHAT</i> 2 messages</span></div>
+                  <div class="app-side__item"><b>Draft a short project upd…</b><span><i class="pill pill--chat pill--tiny">CHAT</i> 2 messages</span></div>
+                </div>
+
+                <div class="chat-app__main">
+                  <div class="chat-log" data-log>
+                    <div class="chat-log__inner" data-log-inner>
+                      <div class="bubble" data-part="bubble">Explain how a hash map handles collisions, simply, with a tiny example.</div>
+
+                      <div class="thought is-collapsed" data-part="thought">
+                        <div class="thought__head">
+                          <svg class="thought__icon" width="15" height="15"><use href="#i-brain"/></svg>
+                          <span class="thought__label" data-thought-label>Thought</span>
+                          <svg class="thought__chev" width="14" height="14"><use href="#i-chevron"/></svg>
+                        </div>
+                        <div class="thought__body">
+                          <p class="thought__meta"><svg width="13" height="13"><use href="#i-brain"/></svg>Thought <span>~65 tokens</span></p>
+                          <p class="thought__text" data-thought-line>They want a simple explanation, so start with what a hash is. Then say what a collision is, in one sentence.</p>
+                          <p class="thought__text" data-thought-line>Show the two usual fixes: chaining and open addressing. A tiny Python example of chaining makes it concrete.</p>
+                        </div>
+                      </div>
+
+                      <div class="answer" data-part="answer">
+                        <h4 data-stream>The short version</h4>
+                        <p data-stream>A hash map turns every key into a number, its <strong>hash</strong>, and uses that number to pick a slot. A <strong>collision</strong> happens when two different keys land in the same slot. There are two common ways to handle it:</p>
+                        <ol>
+                          <li data-stream><strong>Separate chaining</strong>: each slot holds a small list, and colliding entries share it.</li>
+                          <li data-stream><strong>Open addressing</strong>: if a slot is taken, probe the next one until a free slot turns up.</li>
+                        </ol>
+                        <div class="codeblock" data-stream-block>
+                          <div class="codeblock__bar"><span>python</span><span class="codeblock__tools"><span>Wrap</span><span>Canvas</span><span>Copy</span></span></div>
+                          <div class="codeblock__code">
+                            <span class="ln" data-line><span class="k">class</span> <span class="f">HashMap</span>:</span>
+                            <span class="ln" data-line>    <span class="k">def</span> <span class="b">__init__</span>(self, size<span class="k">=</span><span class="b">8</span>):</span>
+                            <span class="ln" data-line>        <span class="b">self</span>.slots <span class="k">=</span> [[] <span class="k">for</span> _ <span class="k">in</span> <span class="b">range</span>(size)]</span>
+                            <span class="ln" data-line> </span>
+                            <span class="ln" data-line>    <span class="k">def</span> <span class="f">put</span>(self, key, value):</span>
+                            <span class="ln" data-line>        bucket <span class="k">=</span> <span class="b">self</span>.slots[<span class="b">hash</span>(key) <span class="k">%</span> <span class="b">len</span>(<span class="b">self</span>.slots)]</span>
+                            <span class="ln" data-line>        <span class="k">for</span> i, (k, _) <span class="k">in</span> <span class="b">enumerate</span>(bucket):</span>
+                            <span class="ln" data-line>            <span class="k">if</span> k <span class="k">==</span> key:</span>
+                            <span class="ln" data-line>                bucket[i] <span class="k">=</span> (key, value)  <span class="c"># same key: replace</span></span>
+                            <span class="ln" data-line>                <span class="k">return</span></span>
+                            <span class="ln" data-line>        bucket.append((key, value))      <span class="c"># collision: share the slot</span></span>
+                          </div>
+                        </div>
+                        <table class="answer__table" data-stream-block>
+                          <thead><tr data-line><th>Approach</th><th>Average lookup</th><th>Good when</th></tr></thead>
+                          <tbody>
+                            <tr data-line><td>Separate chaining</td><td>O(1)</td><td>the load varies a lot</td></tr>
+                            <tr data-line><td>Open addressing</td><td>O(1)</td><td>memory is tight</td></tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="composer" data-composer>
+                    <div class="composer__field">
+                      <span class="composer__placeholder">Ask anything...</span>
+                      <span class="composer__text" data-typed></span><span class="caret" data-caret></span>
+                    </div>
+                    <div class="composer__row">
+                      <span class="chip chip--icon">+</span>
+                      <span class="chip chip--on"><svg width="13" height="13" viewBox="0 0 16 16"><path d="M8 1.8a4.3 4.3 0 0 0-2.6 7.7c.5.4.8 1 .8 1.6v.4h3.6v-.4c0-.6.3-1.2.8-1.6A4.3 4.3 0 0 0 8 1.8ZM6.3 13.6h3.4" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Think</span>
+                      <span class="chip"><svg width="13" height="13" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M2 8h12M8 2c1.8 2 1.8 10 0 12M8 2c-1.8 2-1.8 10 0 12" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>Auto<svg width="10" height="10" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+                      <span class="composer__spacer"></span>
+                      <span class="model-chip"><i class="dot"></i>qwen3.6:27b</span>
+                      <span class="send" data-send><svg width="14" height="14" viewBox="0 0 16 16"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <picture class="demo__fallback">
+            <source data-dark media="(prefers-color-scheme: dark)" type="image/webp"
+              srcset="./assets/img/chat-answer-dark-640.webp 640w, ./assets/img/chat-answer-dark-1024.webp 1024w, ./assets/img/chat-answer-dark-1600.webp 1600w, ./assets/img/chat-answer-dark-2400.webp 2400w"
+              sizes="(min-width: 1328px) 1200px, 92vw">
+            <img src="./assets/img/chat-answer-light-1600.webp"
+              srcset="./assets/img/chat-answer-light-640.webp 640w, ./assets/img/chat-answer-light-1024.webp 1024w, ./assets/img/chat-answer-light-1600.webp 1600w, ./assets/img/chat-answer-light-2400.webp 2400w"
+              sizes="(min-width: 1328px) 1200px, 92vw"
+              width="3200" height="2000" loading="lazy" decoding="async"
+              alt="A Chat answer in Flow: a collapsed Thought card, then a heading, a short explanation, a numbered list, a Python code block and a comparison table about hash map collisions.">
+          </picture>
+          <button class="replay" type="button" aria-label="Replay the Chat demo" data-replay hidden>
+            <svg width="18" height="18" aria-hidden="true"><use href="#i-replay"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ CODE -->
+    <section class="section feature on-midnight" id="code" data-ground="midnight" data-spy-section="code" aria-labelledby="code-title">
+      <div class="container feature__head">
+        <p class="eyebrow eyebrow--mode reveal" style="--mode: var(--code)">Code</p>
+        <h2 class="t-section" id="code-title" data-words="scroll">Build it.</h2>
+        <p class="t-sub feature__sub reveal" style="--d:1">It edits your project. Only after you approve.</p>
+        <p class="t-body feature__body reveal" style="--d:2">The coding agent reads and searches your project, then proposes edits. Every edit opens a Review needed dialog: approve it, reject it, approve the whole turn, or allow it for the session. Changes show as diffs you can revert, or roll back a whole turn.</p>
+      </div>
+
+      <div class="container feature__visual">
+        <div class="demo demo--review" data-demo="review">
+          <p class="vh">Interactive demo of Flow's Review needed dialog. This is only a demo: no real file is touched. The coding agent has read 2 files, run 2 code searches and proposed an edit to src/forms/signup.ts. The edit trims the email and checks it with the existing isEmail helper, asks for passwords of at least 12 characters and a name, and replaces two bare “Required” messages with clear ones. Choose Approve to apply it, or Reject to discard it.</p>
+          <div class="parallax" data-parallax>
+            <div class="window app review-app tilt" data-tilt>
+              <div class="review-app__frame" aria-hidden="true" data-review-frame>
+                <div class="app-bar">
+                  <svg class="app-bar__icon" width="16" height="16"><use href="#i-back"/></svg>
+                  <b class="app-bar__project">web-app</b>
+                  <span class="app-bar__branch"><svg width="12" height="12" viewBox="0 0 16 16"><circle cx="4.5" cy="3.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="4.5" cy="12.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="11.5" cy="5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M4.5 5.3v5.4M11.5 6.8c0 2.6-3 2.4-6.2 4.2" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>main</span>
+                  <span class="pill pill--code">CODE</span>
+                  <span class="app-bar__spacer"></span>
+                  <span class="app-search"><svg width="14" height="14"><use href="#i-search"/></svg>Search<kbd>Ctrl K</kbd></span>
+                </div>
+                <div class="review-app__body">
+                  <div class="review-main">
+                    <div class="bubble">Add validation to the signup form so bad emails and short passwords are rejected.</div>
+                    <div class="activity">
+                      <svg width="15" height="15" viewBox="0 0 16 16"><path d="M1.8 4.2c0-.7.6-1.2 1.2-1.2h3l1.5 1.6H13c.7 0 1.2.5 1.2 1.2v6.1c0 .7-.5 1.2-1.2 1.2H3c-.6 0-1.2-.5-1.2-1.2z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
+                      <span>Read 2 files · 2 code searches</span>
+                      <svg class="activity__chev" width="13" height="13"><use href="#i-chevron"/></svg>
+                    </div>
+                    <div class="activity activity--edit" data-edit-row>
+                      <i class="status-dot" data-status></i>
+                      <b>Edit</b>
+                      <span class="mono">src/forms/signup.ts</span>
+                      <span class="mono diffstat">+12 −2</span>
+                      <svg class="activity__chev" width="13" height="13"><use href="#i-chevron"/></svg>
+                    </div>
+                    <p class="review-note" data-note hidden>Rejected. Nothing was written.</p>
+                  </div>
+                  <div class="changes" data-changes>
+                    <div class="changes__tabs"><span>Plan</span><span>Files</span><span class="is-on">Changes <i data-count>0</i></span><span>Graph</span><span>Trace</span></div>
+                    <div class="changes__head"><span>SESSION CHANGES</span><span data-count>0</span></div>
+                    <p class="changes__empty" data-empty>No changes yet.</p>
+                    <div class="changes__content" data-file hidden>
+                      <div class="changes__turn"><span>Turn 1 · 1 file</span><span class="ghost-btn">↺ Roll back turn</span></div>
+                      <div class="changes__file"><div><b class="mono">src/forms/signup.ts</b><span>checkpoint ready</span></div><span class="ghost-btn">Revert file</span></div>
+                      <div class="changes__diff mono">
+                        <span class="dl dl--hunk">@@ -10,7 +10,17 @@</span>
+                        <span class="dl"><i>11</i> export function validateSignup(input: SignupInput): FieldErrors {</span>
+                        <span class="dl"><i>12</i>   const errors: FieldErrors = {};</span>
+                        <span class="dl dl--del"><i></i>-  if (!input.email) errors.email = "Required";</span>
+                        <span class="dl dl--del"><i></i>-  if (!input.password) errors.password = "Required";</span>
+                        <span class="dl dl--add" data-add><i>13</i>+  const email = input.email.trim();</span>
+                        <span class="dl dl--add" data-add><i>14</i>+  if (!email) {</span>
+                        <span class="dl dl--add" data-add><i>15</i>+    errors.email = "Enter your email address.";</span>
+                        <span class="dl dl--add" data-add><i>16</i>+  } else if (!isEmail(email)) {</span>
+                        <span class="dl dl--add" data-add><i>17</i>+    errors.email = "That email address doesn't look right.";</span>
+                        <span class="dl dl--add" data-add><i>18</i>+  }</span>
+                        <span class="dl dl--add" data-add><i>19</i>+  if (input.password.length &lt; 12) {</span>
+                        <span class="dl dl--add" data-add><i>20</i>+    errors.password = "Use at least 12 characters.";</span>
+                        <span class="dl dl--add" data-add><i>21</i>+  }</span>
+                        <span class="dl dl--add" data-add><i>22</i>+  if (!input.name.trim()) {</span>
+                        <span class="dl dl--add" data-add><i>23</i>+    errors.name = "Tell us what to call you.";</span>
+                        <span class="dl dl--add" data-add><i>24</i>+  }</span>
+                        <span class="dl"><i>25</i>   return errors;</span>
+                        <span class="dl"><i>26</i> }</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="review-scrim" data-scrim aria-hidden="true"></div>
+
+              <div class="review-dialog" data-dialog role="group" aria-labelledby="review-kicker review-target" aria-describedby="review-desc">
+                <p class="review-dialog__kicker" id="review-kicker">
+                  <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2 14.3 13H1.7z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 6.4v3.2M8 11.4v.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                  Review needed · Write
+                </p>
+                <p class="review-dialog__target mono" id="review-target">edit src/forms/signup.ts</p>
+                <p class="review-dialog__desc" id="review-desc">Only the reviewed content below will be applied. Flow will reject the write if the file changed meanwhile.</p>
+                <div class="review-dialog__mode" aria-hidden="true">
+                  <span class="seg is-on">Unified</span><span class="seg">Side by side</span>
+                  <span class="review-dialog__hint">Accept or reject each change; what remains is applied.</span>
+                </div>
+                <div class="diff mono" aria-hidden="true">
+                  <span class="dl"><i>11</i>export function validateSignup(input: SignupInput): FieldErrors {</span>
+                  <span class="dl"><i>12</i>  const errors: FieldErrors = {};</span>
+                  <span class="dl dl--del"><i></i>  if (!input.email) errors.email = "Required";<span class="hunk-actions"><span class="hunk-accept">Accept</span><span class="hunk-reject">Reject</span></span></span>
+                  <span class="dl dl--del"><i></i>  if (!input.password) errors.password = "Required";</span>
+                  <span class="dl dl--add"><i>13</i>  const email = input.email.trim();</span>
+                  <span class="dl dl--add"><i>14</i>  if (!email) {</span>
+                  <span class="dl dl--add"><i>15</i>    errors.email = "Enter your email address.";</span>
+                  <span class="dl dl--add"><i>16</i>  } else if (!isEmail(email)) {</span>
+                  <span class="dl dl--add"><i>17</i>    errors.email = "That email address doesn't look right.";</span>
+                  <span class="dl dl--add"><i>18</i>  }</span>
+                  <span class="dl dl--add"><i>19</i>  if (input.password.length &lt; 12) {</span>
+                  <span class="dl dl--add"><i>20</i>    errors.password = "Use at least 12 characters.";</span>
+                  <span class="dl dl--add"><i>21</i>  }</span>
+                  <span class="dl dl--add"><i>22</i>  if (!input.name.trim()) {</span>
+                  <span class="dl dl--add"><i>23</i>    errors.name = "Tell us what to call you.";</span>
+                  <span class="dl dl--add"><i>24</i>  }</span>
+                  <span class="dl"><i>25</i>  return errors;</span>
+                  <span class="dl"><i>26</i>}</span>
+                </div>
+                <div class="review-dialog__actions">
+                  <button class="rbtn" type="button" aria-disabled="true" data-act="edit">
+                    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="m10.6 2.6 2.8 2.8L6 12.8l-3.4.6.6-3.4z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>Edit…<span class="vh"> (not part of this demo)</span>
+                  </button>
+                  <button class="rbtn" type="button" data-act="reject">
+                    <svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 3.5 9 9m0-9-9 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Reject
+                  </button>
+                  <button class="rbtn" type="button" data-act="approve">
+                    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3.5 7 8l-5 4.5zM8 3.5 13 8l-5 4.5z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>Approve this turn
+                  </button>
+                  <button class="rbtn rbtn--approve" type="button" data-act="approve" data-approve>
+                    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8 13.2 4v3.6c0 3.2-2.2 5.6-5.2 6.6-3-1-5.2-3.4-5.2-6.6V4z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Approve
+                  </button>
+                  <button class="rbtn" type="button" data-act="approve">Allow for this session</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <picture class="demo__fallback">
+            <img src="./assets/img/code-approval-dark-1600.webp"
+              srcset="./assets/img/code-approval-dark-640.webp 640w, ./assets/img/code-approval-dark-1024.webp 1024w, ./assets/img/code-approval-dark-1600.webp 1600w, ./assets/img/code-approval-dark-2400.webp 2400w"
+              sizes="(min-width: 1328px) 1200px, 92vw"
+              width="3200" height="2000" loading="lazy" decoding="async"
+              alt="Flow's Review needed dialog for an edit to src/forms/signup.ts. It shows the diff, with removed lines in red and added lines in green, and the buttons Edit, Reject, Approve this turn, Approve and Allow for this session.">
+          </picture>
+          <button class="replay" type="button" aria-label="Replay the Review demo" data-replay hidden>
+            <svg width="18" height="18" aria-hidden="true"><use href="#i-replay"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ CODE MAP -->
+    <section class="section feature on-midnight" id="code-map" data-ground="midnight" data-spy-section="code" aria-labelledby="map-title">
+      <div class="container feature__head">
+        <h2 class="t-section" id="map-title" data-words="scroll">See how it fits together.</h2>
+        <p class="t-sub feature__sub reveal" style="--d:1">A live map of your whole codebase.</p>
+        <p class="t-body feature__body reveal" style="--d:2">The code graph maps your project as an interactive map. Hover a file to see what it connects to.</p>
+      </div>
+
+      <div class="container feature__visual">
+        <figure class="demo demo--map" data-demo="codemap">
+          <div class="parallax" data-parallax>
+            <div class="window app map-app tilt" data-tilt>
+              <div class="map-bar" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="3" r="1.8" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="3" cy="12.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="13" cy="12.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M7 4.6 4 11M9 4.6l3 6.4M4.8 12.5h6.4" stroke="currentColor" stroke-width="1.2"/></svg>
+                <span class="map-bar__title">Code map</span>
+                <span class="seg-group"><span class="seg is-on">Map</span><span class="seg">Overview</span></span>
+                <span class="map-bar__stats">24 files · 38 symbols · 141 links</span>
+              </div>
+              <div class="map-canvas" data-map-canvas>
+                <p class="vh" id="map-help">Each file of the sample project is a point on the map. Use Tab to reach a file, and the arrow keys to move between the files it connects to.</p>
+                <div class="map-tip" data-map-tip hidden></div>
+              </div>
+            </div>
+          </div>
+          <picture class="demo__fallback">
+            <img src="./assets/img/code-graph-dark-1600.webp"
+              srcset="./assets/img/code-graph-dark-640.webp 640w, ./assets/img/code-graph-dark-1024.webp 1024w, ./assets/img/code-graph-dark-1600.webp 1600w, ./assets/img/code-graph-dark-2400.webp 2400w"
+              sizes="(min-width: 1328px) 1200px, 92vw"
+              width="3200" height="2000" loading="lazy" decoding="async"
+              alt="Flow's code map of a sample project: each file is a blue circle labelled with its name, joined by lines to the files it imports or calls.">
+          </picture>
+          <figcaption class="caption">Sample project shown.</figcaption>
+          <button class="replay" type="button" aria-label="Replay the code map" data-replay hidden>
+            <svg width="18" height="18" aria-hidden="true"><use href="#i-replay"/></svg>
+          </button>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============================================================ RESEARCH -->
+    <section class="section feature on-ivory" id="research" data-ground="ivory" data-spy-section="research" aria-labelledby="research-title">
+      <div class="container feature__head">
+        <p class="eyebrow eyebrow--mode reveal" style="--mode: var(--research)">Research</p>
+        <h2 class="t-section" id="research-title" data-words="scroll">Know it.</h2>
+        <p class="t-sub feature__sub reveal" style="--d:1">Reads the sources. Cites every claim. Checks them.</p>
+        <p class="t-body feature__body reveal" style="--d:2">Flow searches the web, reads the sources, and writes an answer where every claim cites its source. Cited claims are checked against the sources automatically.</p>
+      </div>
+
+      <div class="container feature__visual">
+        <div class="demo demo--cite" data-demo="citations">
+          <p class="vh">Example of a Research answer. Each citation number links to one of three sources listed beside the answer; focus a citation to highlight its source.</p>
+          <div class="parallax" data-parallax>
+            <div class="window app cite-app tilt" data-tilt>
+              <div class="app-bar" aria-hidden="true">
+                <svg class="app-bar__icon" width="16" height="16"><use href="#i-back"/></svg>
+                <span class="pill pill--research">RESEARCH</span>
+                <span class="app-bar__spacer"></span>
+                <span class="app-search"><svg width="14" height="14"><use href="#i-search"/></svg>Search<kbd>Ctrl K</kbd></span>
+              </div>
+              <div class="cite-app__body" data-cite-body>
+                <div class="cite-main">
+                  <div class="bubble">What makes the James Webb Space Telescope different from Hubble?</div>
+                  <div class="answer">
+                    <h4>Infrared, not visible light</h4>
+                    <p>Despite Webb's mirror diameter being 2.7 times larger than that of the Hubble Space Telescope, it produces images of comparable resolution because it observes in the infrared spectrum, which has longer wavelengths than the Hubble's visible spectrum <button class="cite" type="button" data-cite="1" aria-label="Citation 1" aria-describedby="src-1-title" aria-pressed="false">[1]</button>.</p>
+                    <h4>Built as Hubble's successor</h4>
+                    <p>James Webb Space Telescope (JWST), U.S.–European Space Agency–Canadian satellite observatory designed as the successor to the Hubble Space Telescope (HST) and launched by an Ariane 5 rocket from Kourou, French Guiana, on December 25, 2021 <button class="cite" type="button" data-cite="3" aria-label="Citation 3" aria-describedby="src-3-title" aria-pressed="false">[3]</button>.</p>
+                    <h4>Hubble, for comparison</h4>
+                    <p>The Hubble Space Telescope was funded and built in the 1970s by NASA with contributions from the European Space Agency <button class="cite" type="button" data-cite="2" aria-label="Citation 2" aria-describedby="src-2-title" aria-pressed="false">[2]</button>.</p>
+                    <p class="checked" data-checked>
+                      <span class="checked__icon" aria-hidden="true"><svg width="12" height="12"><use href="#i-check"/></svg></span>
+                      Checked automatically: 3 of 3 cited statements match the evidence they cite.
+                    </p>
+                  </div>
+                </div>
+                <div class="sources">
+                  <div class="sources__tabs" aria-hidden="true"><span>Plan</span><span class="is-on">Sources</span><span>Report</span></div>
+                  <div class="sources__head" aria-hidden="true"><span>SOURCES</span><span>3</span></div>
+                  <ol class="sources__list" role="list" aria-label="Sources">
+                    <li class="source" data-source="1">
+                      <p class="source__title" id="src-1-title"><span class="vh">Source 1: </span>James Webb Space Telescope - Wikipedia</p>
+                      <p class="source__url">https://en.wikipedia.org/wiki/James_Webb_Space_Telescope</p>
+                      <p class="source__meta">WIKIMEDIA FOUNDATION, INC. · 2004-01-18 · REFERENCE</p>
+                    </li>
+                    <li class="source" data-source="2">
+                      <p class="source__title" id="src-2-title"><span class="vh">Source 2: </span>Hubble Space Telescope - Wikipedia</p>
+                      <p class="source__url">https://en.wikipedia.org/wiki/Hubble_Space_Telescope</p>
+                      <p class="source__meta">WIKIMEDIA FOUNDATION, INC. · 2002-02-21 · REFERENCE</p>
+                    </li>
+                    <li class="source" data-source="3">
+                      <p class="source__title" id="src-3-title"><span class="vh">Source 3: </span>James Webb Space Telescope (JWST) | Definition &amp; Facts | Britannica</p>
+                      <p class="source__url">https://www.britannica.com/topic/James-Webb-Space-Telescope</p>
+                      <p class="source__meta">ENCYCLOPEDIA BRITANNICA · 2026-11-15 · REFERENCE</p>
+                    </li>
+                  </ol>
+                </div>
+              </div>
+              <svg class="cite-links" aria-hidden="true" data-cite-links><path data-cite-path pathLength="1" d=""/></svg>
+            </div>
+          </div>
+          <picture class="demo__fallback">
+            <source data-dark media="(prefers-color-scheme: dark)" type="image/webp"
+              srcset="./assets/img/research-sources-dark-640.webp 640w, ./assets/img/research-sources-dark-1024.webp 1024w, ./assets/img/research-sources-dark-1600.webp 1600w, ./assets/img/research-sources-dark-2400.webp 2400w"
+              sizes="(min-width: 1328px) 1200px, 92vw">
+            <img src="./assets/img/research-sources-light-1600.webp"
+              srcset="./assets/img/research-sources-light-640.webp 640w, ./assets/img/research-sources-light-1024.webp 1024w, ./assets/img/research-sources-light-1600.webp 1600w, ./assets/img/research-sources-light-2400.webp 2400w"
+              sizes="(min-width: 1328px) 1200px, 92vw"
+              width="3200" height="2000" loading="lazy" decoding="async"
+              alt="A Research answer about the James Webb and Hubble telescopes with numbered citations, beside a Sources panel that lists the three cited sources.">
+          </picture>
+          <button class="replay" type="button" aria-label="Replay the citation demo" data-replay hidden>
+            <svg width="18" height="18" aria-hidden="true"><use href="#i-replay"/></svg>
+          </button>
+        </div>
+
+        <div class="export">
+          <div class="export__copy">
+            <h3 class="export__title reveal">Export</h3>
+            <p class="export__text reveal" style="--d:1">Reports export as MD, HTML, PDF and DOCX. Citations export as BIB and RIS.</p>
+            <ul class="export__pills reveal" style="--d:2" role="list">
+              <li class="fmt"><span class="fmt__ext">MD</span><span class="fmt__name">Markdown</span></li>
+              <li class="fmt"><span class="fmt__ext">HTML</span><span class="fmt__name">Web page</span></li>
+              <li class="fmt"><span class="fmt__ext">PDF</span><span class="fmt__name">Print</span></li>
+              <li class="fmt"><span class="fmt__ext">DOCX</span><span class="fmt__name">Word</span></li>
+              <li class="export__divider" aria-hidden="true"></li>
+              <li class="fmt"><span class="fmt__ext">BIB</span><span class="fmt__name">BibTeX</span></li>
+              <li class="fmt"><span class="fmt__ext">RIS</span><span class="fmt__name">Citations</span></li>
+            </ul>
+          </div>
+          <div class="export__shot window reveal" style="--d:1">
+            <picture>
+              <source data-dark media="(prefers-color-scheme: dark)" type="image/webp"
+                srcset="./assets/img/research-report-dark-640.webp 640w, ./assets/img/research-report-dark-979.webp 979w"
+                sizes="(max-width: 899px) 86vw, 440px">
+              <img src="./assets/img/research-report-light-640.webp"
+                srcset="./assets/img/research-report-light-640.webp 640w, ./assets/img/research-report-light-979.webp 979w"
+                sizes="(max-width: 899px) 86vw, 440px"
+                width="979" height="1567" loading="lazy" decoding="async"
+                alt="Flow's Report panel: a row of export buttons for MD, HTML, PDF, DOCX, BIB and RIS above the finished report, whose claims carry numbered citations.">
+            </picture>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================================================== LOCAL -->
+    <section class="section feature local on-midnight" id="local" data-ground="midnight" data-spy-section="local" aria-labelledby="local-title">
+      <div class="container feature__head">
+        <h2 class="t-section" id="local-title" data-words="scroll">Runs on your computer.</h2>
+        <p class="t-sub feature__sub reveal" style="--d:1">Local models with Ollama. Cloud models with OpenRouter, when you choose.</p>
+        <p class="t-body feature__body reveal" style="--d:2">Pick a model you've installed in Ollama and it runs on this computer. Prefer the cloud? Add an OpenRouter key; Flow keeps it in your operating system's credential store.</p>
+      </div>
+
+      <div class="container feature__visual">
+        <figure class="onboard">
+          <div class="parallax" data-parallax>
+            <div class="onboard__card app tilt" data-tilt aria-hidden="true">
+              <div class="onboard__logo"><svg width="28" height="28"><use href="#flow-icon"/></svg><span class="mono">Flow</span></div>
+              <div class="onboard__steps"><i class="is-on"></i><i></i><i></i></div>
+              <p class="onboard__step">Step 1 · Model provider</p>
+              <p class="onboard__title">Connect a model when you are ready</p>
+              <p class="onboard__desc">Run a model on this computer with Ollama, or use OpenRouter with an API key. You can skip this and configure it later in Settings.</p>
+              <div class="onboard__choices">
+                <div class="choice is-selected"><b>Ollama</b><span>Local · private, runs on this computer</span></div>
+                <div class="choice"><b>OpenRouter</b><span>Cloud · one API key, many models</span></div>
+              </div>
+            </div>
+          </div>
+          <figcaption class="vh">Flow's first-run screen, step 1 of 3, model provider: “Connect a model when you are ready.” It offers Ollama, local and private, running on this computer, or OpenRouter, in the cloud with one API key for many models. You can skip this and configure it later in Settings.</figcaption>
+        </figure>
+
+        <div class="models">
+          <p class="models__label reveal">For example, with models from the Ollama library.</p>
+          <div class="marquee reveal" style="--d:1">
+            <ul class="marquee__track" role="list" aria-label="Example models">
+              <li class="model-chip"><i class="dot"></i>qwen3.6:27b</li>
+              <li class="model-chip"><i class="dot"></i>qwen3-coder:30b</li>
+              <li class="model-chip"><i class="dot"></i>gemma4:31b</li>
+              <li class="model-chip"><i class="dot"></i>deepseek-r1:32b</li>
+              <li class="model-chip"><i class="dot"></i>nemotron-3.5-lightning:30b</li>
+              <li class="model-chip"><i class="dot"></i>qwen3:30b</li>
+              <!-- The same chips again, so the loop is seamless. Hidden from assistive tech. -->
+              <li class="model-chip" aria-hidden="true"><i class="dot"></i>qwen3.6:27b</li>
+              <li class="model-chip" aria-hidden="true"><i class="dot"></i>qwen3-coder:30b</li>
+              <li class="model-chip" aria-hidden="true"><i class="dot"></i>gemma4:31b</li>
+              <li class="model-chip" aria-hidden="true"><i class="dot"></i>deepseek-r1:32b</li>
+              <li class="model-chip" aria-hidden="true"><i class="dot"></i>nemotron-3.5-lightning:30b</li>
+              <li class="model-chip" aria-hidden="true"><i class="dot"></i>qwen3:30b</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ FILM -->
+    <section class="section film on-midnight" id="film" data-ground="midnight" aria-labelledby="film-title">
+      <div class="container feature__head">
+        <h2 class="t-section" id="film-title" data-words="scroll">One minute with Flow.</h2>
+      </div>
+      <div class="container feature__visual">
+        <div class="player reveal" data-player>
+          <video class="player__video" controls preload="none" playsinline
+            poster="./assets/img/film-poster-1920.webp" width="1920" height="1080"
+            aria-label="Flow launch film, one minute, with captions">
+            <source src="./assets/video/flow-film-1080p.mp4" type="video/mp4">
+            <track kind="captions" srclang="en" label="English" src="./assets/video/flow-film.en.vtt" default>
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ DOWNLOAD -->
+    <section class="section download on-ivory" id="download" data-ground="ivory" data-spy-section="download" aria-labelledby="download-title">
+      <div class="container feature__head">
+        <h2 class="t-section" id="download-title" data-words="scroll">Get Flow.</h2>
+        <p class="t-sub feature__sub reveal" style="--d:1">Free to use. For Windows and Ubuntu.</p>
+      </div>
+
+      <div class="container">
+        <div class="platforms">
+          <article class="platform reveal" data-platform="windows" aria-labelledby="pf-windows">
+            <header class="platform__head">
+              <span class="platform__glyph"><svg width="22" height="22" aria-hidden="true"><use href="#glyph-windows"/></svg></span>
+              <h3 id="pf-windows">Windows</h3>
+            </header>
+            <ul class="platform__files" role="list" data-files="windows">
+              <!-- config:files:windows -->
+          <li class="file">
+            <div class="file__head">
+              <p class="file__label">Windows installer (.exe)</p>
+              <span class="btn btn--soon" aria-disabled="true">Coming soon</span>
+            </div>
+            <dl class="file__meta">
+              <div><dt>Version</dt><dd>2.1.3</dd></div>
+              <div><dt>File</dt><dd><span class="soon">File name coming soon</span></dd></div>
+              <div><dt>Size</dt><dd><span class="soon">Size coming soon</span></dd></div>
+            </dl>
+            <details class="sha">
+              <summary>SHA-256</summary>
+              <p class="sha__value"><span class="soon">Checksum coming soon</span></p>
+            </details>
+          </li>
+              <!-- /config:files:windows -->
+            </ul>
+          </article>
+
+          <article class="platform reveal" style="--d:1" data-platform="ubuntu" aria-labelledby="pf-ubuntu">
+            <header class="platform__head">
+              <span class="platform__glyph"><svg width="22" height="22" aria-hidden="true"><use href="#glyph-ubuntu"/></svg></span>
+              <h3 id="pf-ubuntu">Ubuntu</h3>
+            </header>
+            <ul class="platform__files" role="list" data-files="ubuntu">
+              <!-- config:files:ubuntu -->
+          <li class="file">
+            <div class="file__head">
+              <p class="file__label">Ubuntu package (.deb)</p>
+              <span class="btn btn--soon" aria-disabled="true">Coming soon</span>
+            </div>
+            <dl class="file__meta">
+              <div><dt>Version</dt><dd>2.1.3</dd></div>
+              <div><dt>File</dt><dd><span class="soon">File name coming soon</span></dd></div>
+              <div><dt>Size</dt><dd><span class="soon">Size coming soon</span></dd></div>
+            </dl>
+            <details class="sha">
+              <summary>SHA-256</summary>
+              <p class="sha__value"><span class="soon">Checksum coming soon</span></p>
+            </details>
+          </li>
+          <li class="file">
+            <div class="file__head">
+              <p class="file__label">AppImage</p>
+              <span class="btn btn--soon" aria-disabled="true">Coming soon</span>
+            </div>
+            <dl class="file__meta">
+              <div><dt>Version</dt><dd>2.1.3</dd></div>
+              <div><dt>File</dt><dd><span class="soon">File name coming soon</span></dd></div>
+              <div><dt>Size</dt><dd><span class="soon">Size coming soon</span></dd></div>
+            </dl>
+            <details class="sha">
+              <summary>SHA-256</summary>
+              <p class="sha__value"><span class="soon">Checksum coming soon</span></p>
+            </details>
+          </li>
+              <!-- /config:files:ubuntu -->
+            </ul>
+          </article>
+        </div>
+
+        <p class="download__releases reveal" data-releases><!-- config:releases --><span class="soon">All releases and release notes: coming soon</span><!-- /config:releases --></p>
+        <p class="download__note reveal">Flow needs a model to work: install <a href="https://ollama.com">Ollama</a> to run models locally, or add an <a href="https://openrouter.ai">OpenRouter</a> key in Settings.</p>
+      </div>
+    </section>
+
+    <!-- ================================================================= FAQ -->
+    <section class="section faq on-ivory" id="faq" data-ground="ivory" aria-labelledby="faq-title">
+      <div class="container faq__grid">
+        <h2 class="t-section faq__title" id="faq-title" data-words="scroll">Questions.</h2>
+        <div class="faq__list">
+          <details class="faq__item reveal">
+            <summary><h3>Is Flow free?</h3><span class="faq__icon" aria-hidden="true"></span></summary>
+            <div class="faq__answer"><p>Yes. Flow is free to use. It is closed source.</p></div>
+          </details>
+          <details class="faq__item reveal" style="--d:1">
+            <summary><h3>Which systems does it run on?</h3><span class="faq__icon" aria-hidden="true"></span></summary>
+            <div class="faq__answer"><p>Windows and Ubuntu.</p></div>
+          </details>
+          <details class="faq__item reveal" style="--d:2">
+            <summary><h3>Do I need an internet connection?</h3><span class="faq__icon" aria-hidden="true"></span></summary>
+            <div class="faq__answer"><p>Not for local models: with Ollama, models run on your computer. Research mode searches the web, and OpenRouter models run in the cloud, so those need a connection.</p></div>
+          </details>
+          <details class="faq__item reveal" style="--d:3">
+            <summary><h3>Where is my OpenRouter key stored?</h3><span class="faq__icon" aria-hidden="true"></span></summary>
+            <div class="faq__answer"><p>In your operating system's credential store.</p></div>
+          </details>
+          <details class="faq__item reveal" style="--d:4">
+            <summary><h3>Will the coding agent change my files without asking?</h3><span class="faq__icon" aria-hidden="true"></span></summary>
+            <div class="faq__answer"><p>No. Every edit opens a Review needed dialog, and changes can be reverted per file or rolled back per turn.</p></div>
+          </details>
+          <details class="faq__item reveal" style="--d:5">
+            <summary><h3>What can I export from Research?</h3><span class="faq__icon" aria-hidden="true"></span></summary>
+            <div class="faq__answer"><p>Reports as Markdown, HTML, PDF or Word (DOCX), and citations as BibTeX or RIS.</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================== FOOTER -->
+  <footer class="footer on-midnight" data-ground="midnight">
+    <div class="container">
+      <p class="footer__line" data-words="scroll">Chat. Code. Research. <em>In flow.</em></p>
+      <div class="footer__row">
+        <a class="lockup footer__brand" href="#top" aria-label="Flow, back to top">
+          <svg class="lockup__icon" width="28" height="28" aria-hidden="true"><use href="#flow-icon"/></svg>
+          <span class="lockup__word">Flow</span>
+        </a>
+        <nav aria-label="Footer">
+          <ul class="footer__links" role="list" data-footer-links>
+            <!-- config:footer -->
+            <li><a href="#download">Download</a></li>
+            <li><span class="soon">Releases (coming soon)</span></li>
+            <li><span class="soon">Contact (coming soon)</span></li>
+            <!-- /config:footer -->
+          </ul>
+        </nav>
+      </div>
+      <div class="footer__base">
+        <p class="footer__legal">© <span data-year>2026</span> Flow. Free to use. Closed source.</p>
+        <fieldset class="theme-toggle" data-theme-toggle>
+          <legend class="vh">Colour theme</legend>
+          <label><input type="radio" name="theme" value="auto" checked><span>Auto</span></label>
+          <label><input type="radio" name="theme" value="light"><span>Light</span></label>
+          <label><input type="radio" name="theme" value="dark"><span>Dark</span></label>
+        </fieldset>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Film modal, opened by "Watch the film". It plays with sound because the
+       click that opens it is a user gesture. -->
+  <dialog class="film-modal" aria-label="Flow launch film" data-film-modal>
+    <div class="film-modal__inner">
+      <button class="film-modal__close" type="button" aria-label="Close the film" data-film-close>
+        <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <div class="player" data-player data-player-modal>
+        <video class="player__video" controls preload="none" playsinline
+          poster="./assets/img/film-poster-1920.webp" width="1920" height="1080"
+          aria-label="Flow launch film, one minute, with captions">
+          <source src="./assets/video/flow-film-1080p.mp4" type="video/mp4">
+          <track kind="captions" srclang="en" label="English" src="./assets/video/flow-film.en.vtt" default>
+        </video>
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>
