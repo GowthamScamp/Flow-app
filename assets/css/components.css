@@ -354,7 +354,7 @@ html:not(.js) .demo > .demo__frame { display: none; }
 }
 .composer.is-focused::after { opacity: 1; }
 .composer__field { position: relative; min-height: 22px; font-size: 14.5px; color: var(--app-text); }
-.composer__placeholder { position: absolute; inset: 0 auto auto 0; color: var(--app-soft); opacity: 0.8; }
+.composer__placeholder { position: absolute; inset: 0 auto auto 0; color: var(--app-soft); }
 .composer.has-text .composer__placeholder { display: none; }
 .caret {
   display: inline-block;
