@@ -46,13 +46,15 @@ export default function initCitations(root) {
       const bend = Math.max(40, (x2 - x1) * 0.5);
       d = `M${x1} ${y1} C${x1 + bend} ${y1} ${x2 - bend} ${y2} ${x2} ${y2}`;
     } else {
-      // Stacked (narrow screens): drop from the chip down to the card.
-      const x1 = c.x + c.w / 2;
-      const y1 = c.y + c.h + 3;
-      const x2 = s.x + 18;
-      const y2 = s.y + 18;
-      const bend = Math.max(40, (y2 - y1) * 0.5);
-      d = `M${x1} ${y1} C${x1} ${y1 + bend} ${x2} ${y2 - bend} ${x2} ${y2}`;
+      // Stacked (narrow screens): leave the chip's right edge, run down the
+      // right margin so the line never crosses the text, and meet the card
+      // from the right.
+      const x1 = c.x + c.w + 3;
+      const y1 = c.y + c.h / 2;
+      const x2 = s.x + s.w - 14;
+      const y2 = s.y + 20;
+      const lane = app.clientWidth - 6;
+      d = `M${x1} ${y1} C${lane} ${y1} ${lane} ${y2} ${x2} ${y2}`;
     }
     path.setAttribute("d", d);
   }

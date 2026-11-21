@@ -1116,6 +1116,11 @@
 .theme-toggle input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
 html:not(.js) .theme-toggle { display: none; }
 
+/* ============================================================ PERFORMANCE */
+/* The Chat and Review windows have fixed heights, so the browser can skip
+   laying them out until they near the viewport without anything shifting. */
+.chat-app, .review-app { content-visibility: auto; }
+
 /* ======================================================= DARK WINDOWS */
 /* The Review dialog and the code map are dark in the app, so they stay dark
    windows on the light page. Every app token inside resolves to its dark

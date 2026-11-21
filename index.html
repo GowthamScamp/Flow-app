@@ -160,8 +160,8 @@
     <section class="section hero" id="top" aria-labelledby="hero-title">
       <div class="container hero__copy">
         <p class="eyebrow reveal-load" style="--d:0">Flow <span data-config-text="version">2.1.3</span> · Windows and Ubuntu</p>
-        <h1 class="t-hero hero__title reveal-load" id="hero-title" style="--d:1"><span class="hero__line">Your AI workspace.</span> <span class="hero__line">On your computer.</span></h1>
-        <p class="t-sub hero__sub reveal-load" style="--d:2">Chat, code and research in one calm desktop app. Run models on your computer with Ollama, or in the cloud with OpenRouter when you choose.</p>
+        <h1 class="t-hero hero__title rise-load" id="hero-title" style="--d:1"><span class="hero__line">Your AI workspace.</span> <span class="hero__line">On your computer.</span></h1>
+        <p class="t-sub hero__sub rise-load" style="--d:2">Chat, code and research in one calm desktop app. Run models on your computer with Ollama, or in the cloud with OpenRouter when you choose.</p>
         <div class="hero__actions reveal-load" style="--d:3">
           <a class="btn btn--primary btn--large" href="#download" data-os-button="windows">
             <svg width="16" height="16" aria-hidden="true"><use href="#glyph-windows"/></svg>
@@ -176,17 +176,17 @@
         <p class="hero__os-note reveal-load" style="--d:4" data-os-note hidden>Flow is available for Windows and Ubuntu.</p>
       </div>
 
-      <div class="container hero__visual reveal-load" style="--d:5">
+      <div class="container hero__visual">
         <div class="window window--hero">
           <div class="hero-shot">
             <picture>
                   <source data-dark media="(prefers-color-scheme: dark)" type="image/webp"
                     srcset="./assets/img/home-dark-640.webp 640w, ./assets/img/home-dark-1024.webp 1024w, ./assets/img/home-dark-1600.webp 1600w, ./assets/img/home-dark-2400.webp 2400w"
-                    sizes="(max-width: 700px) 175vw, (min-width: 1328px) 1200px, 92vw">
+                    sizes="(max-width: 700px) 140vw, (min-width: 1328px) 1200px, 92vw">
                   <img src="./assets/img/home-light-1600.webp"
                     srcset="./assets/img/home-light-640.webp 640w, ./assets/img/home-light-1024.webp 1024w, ./assets/img/home-light-1600.webp 1600w, ./assets/img/home-light-2400.webp 2400w"
-                    sizes="(max-width: 700px) 175vw, (min-width: 1328px) 1200px, 92vw"
-                    width="3200" height="1720" fetchpriority="high" decoding="async"
+                    sizes="(max-width: 700px) 140vw, (min-width: 1328px) 1200px, 92vw"
+                    width="3200" height="1720" fetchpriority="high"
                     alt="Flow's Home screen asking “What would you like to work on?”, with three mode cards, Chat, Coding Assistant and Research Assistant, above a list of recent work.">
                 </picture>
           </div>
@@ -312,7 +312,7 @@
                       </div>
 
                       <div class="answer" data-part="answer">
-                        <h4 data-stream>The short version</h4>
+                        <p class="answer__h" data-stream>The short version</p>
                         <p data-stream>A hash map turns every key into a number, its <strong>hash</strong>, and uses that number to pick a slot. A <strong>collision</strong> happens when two different keys land in the same slot. There are two common ways to handle it:</p>
                         <ol>
                           <li data-stream><strong>Separate chaining</strong>: each slot holds a small list, and colliding entries share it.</li>
@@ -581,11 +581,11 @@
                 <div class="cite-main">
                   <div class="bubble">What makes the James Webb Space Telescope different from Hubble?</div>
                   <div class="answer">
-                    <h4>Infrared, not visible light</h4>
+                    <p class="answer__h">Infrared, not visible light</p>
                     <p>Despite Webb's mirror diameter being 2.7 times larger than that of the Hubble Space Telescope, it produces images of comparable resolution because it observes in the infrared spectrum, which has longer wavelengths than the Hubble's visible spectrum <button class="cite" type="button" data-cite="1" aria-label="Citation 1" aria-describedby="src-1-title" aria-pressed="false">[1]</button>.</p>
-                    <h4>Built as Hubble's successor</h4>
+                    <p class="answer__h">Built as Hubble's successor</p>
                     <p>James Webb Space Telescope (JWST), U.S.–European Space Agency–Canadian satellite observatory designed as the successor to the Hubble Space Telescope (HST) and launched by an Ariane 5 rocket from Kourou, French Guiana, on December 25, 2021 <button class="cite" type="button" data-cite="3" aria-label="Citation 3" aria-describedby="src-3-title" aria-pressed="false">[3]</button>.</p>
-                    <h4>Hubble, for comparison</h4>
+                    <p class="answer__h">Hubble, for comparison</p>
                     <p>The Hubble Space Telescope was funded and built in the 1970s by NASA with contributions from the European Space Agency <button class="cite" type="button" data-cite="2" aria-label="Citation 2" aria-describedby="src-2-title" aria-pressed="false">[2]</button>.</p>
                     <p class="checked" data-checked>
                       <span class="checked__icon" aria-hidden="true"><svg width="12" height="12"><use href="#i-check"/></svg></span>

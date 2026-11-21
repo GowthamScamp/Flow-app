@@ -268,7 +268,7 @@ html:not(.js) .demo > .demo__frame { display: none; }
 
 /* The answer: headings, lists, code blocks and tables. */
 .answer { display: grid; gap: 12px; font-size: 14.5px; line-height: 1.62; color: var(--app-text); }
-.answer h4 { font-size: 17px; font-weight: 650; letter-spacing: -0.01em; margin-top: 6px; }
+.answer .answer__h { font-size: 17px; font-weight: 650; letter-spacing: -0.01em; margin-top: 6px; }
 .answer ol { margin: 0; padding-left: 22px; display: grid; gap: 4px; }
 .answer li::marker { color: var(--app-soft); }
 .answer strong { font-weight: 650; }
@@ -305,7 +305,7 @@ html:not(.js) .demo > .demo__frame { display: none; }
 .codeblock .k { color: #F97583; }
 .codeblock .f { color: #B392F0; }
 .codeblock .b { color: #79B8FF; }
-.codeblock .c { color: #6A737D; }
+.codeblock .c { color: #8B949E; }  /* lighter than the app's #6A737D: AA on #16171B */
 
 .answer__table {
   width: 100%;

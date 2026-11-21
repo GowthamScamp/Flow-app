@@ -148,6 +148,7 @@ p, li, dd, figcaption { text-wrap: pretty; }
               script that fails to load never leaves content hidden. */
 
 @keyframes soft-rise { from { opacity: 0; transform: translateY(16px); } }
+@keyframes rise { from { transform: translateY(16px); } }
 
 @media (prefers-reduced-motion: no-preference) {
   .booted .reveal:not(.is-in) { opacity: 0; transform: translateY(16px); }
@@ -157,6 +158,11 @@ p, li, dd, figcaption { text-wrap: pretty; }
   }
   .js .reveal-load {
     animation: soft-rise 0.8s var(--ease-out) both;
+    animation-delay: calc(var(--d, 0) * 80ms + 100ms);
+  }
+  /* The large hero text only moves: it is visible from the first frame. */
+  .js .rise-load {
+    animation: rise 0.9s var(--ease-out) both;
     animation-delay: calc(var(--d, 0) * 80ms + 100ms);
   }
 }

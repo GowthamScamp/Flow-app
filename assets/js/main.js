@@ -215,19 +215,12 @@ function initDemos() {
 
 /* ---- Film ----------------------------------------------------------------------------------- */
 
-// The custom controls are built when the film section comes near; until then
-// (and without JS) the native <video controls> works on its own.
+// Building the controls is cheap (the video itself loads only on play), and
+// doing it up front means the bare <video> is never a Tab stop. Without JS the
+// native <video controls> works on its own.
 function initFilm() {
   const el = $("#film [data-player]");
-  if (!el) return;
-  new IntersectionObserver(
-    ([entry], obs) => {
-      if (!entry.isIntersecting) return;
-      createPlayer(el);
-      obs.disconnect();
-    },
-    { rootMargin: "300px 0px" }
-  ).observe(el);
+  if (el) createPlayer(el);
 }
 
 /* ---- SHA-256 copy buttons ------------------------------------------------------------------- */

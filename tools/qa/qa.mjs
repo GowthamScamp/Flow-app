@@ -38,13 +38,13 @@ if (!CHROME) throw new Error("Chrome not found; set CHROME_PATH");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /* ---- Minimal CDP client ------------------------------------------------- */
-async function launch() {
+async function launch(extraArgs = []) {
   const port = 9300 + Math.floor(Math.random() * 500);
   const profile = join(tmpdir(), `flow-qa-${port}`);
   const proc = spawn(CHROME, [
     "--headless=new", `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`,
     "--no-first-run", "--no-default-browser-check", "--hide-scrollbars", "--mute-audio",
-    "--autoplay-policy=no-user-gesture-required", "about:blank",
+    "--autoplay-policy=no-user-gesture-required", ...extraArgs, "about:blank",
   ], { stdio: "ignore" });
   let info;
   for (let i = 0; i < 50 && !info; i++) {
@@ -110,14 +110,17 @@ async function scrollThrough(cdp, stepPause = 140) {
   })()`);
 }
 
-async function shot(cdp, file, fullPage = false) {
+// `scripts: false` is for the no-JS run, where nothing may be evaluated in the page.
+async function shot(cdp, file, fullPage = false, scripts = true) {
   let params = { format: "png" };
   if (fullPage) {
-    // A fixed ground layer can't cover a full-page capture, so paint each
-    // section's ground directly (the same as the no-JS look) for this shot.
-    await evaluate(cdp, `(() => { const s = document.createElement('style'); s.id='qa-ground';
-      s.textContent = '.booted .on-ivory{background-color:var(--ground)!important}.booted .on-midnight{background-color:var(--midnight)!important}.ground{display:none}.nav{position:absolute!important}';
-      document.head.append(s); scrollTo(0,0); })()`);
+    // A full-page capture should show the nav once, at the top, not floating
+    // over the middle of the page.
+    if (scripts) {
+      await evaluate(cdp, `(() => { const s = document.createElement('style'); s.id='qa-ground';
+        s.textContent = '.nav{position:absolute!important}';
+        document.head.append(s); scrollTo(0,0); })()`);
+    }
     await sleep(500);
     const m = await cdp.send("Page.getLayoutMetrics");
     const { width, height } = m.cssContentSize ?? m.contentSize;
@@ -125,7 +128,7 @@ async function shot(cdp, file, fullPage = false) {
   }
   const { data } = await cdp.send("Page.captureScreenshot", params);
   writeFileSync(join(OUT, file), Buffer.from(data, "base64"));
-  if (fullPage) await evaluate(cdp, `document.getElementById('qa-ground')?.remove()`);
+  if (fullPage && scripts) await evaluate(cdp, `document.getElementById('qa-ground')?.remove()`);
 }
 
 function collectConsole(cdp) {
@@ -167,8 +170,8 @@ const OVERFLOW_JS = `(() => {
 /* ---- Runs ------------------------------------------------------------------ */
 const report = { base: BASE, when: new Date().toISOString(), widths: {}, variants: {} };
 
-async function withPage(fn) {
-  const cdp = await launch();
+async function withPage(fn, extraArgs = []) {
+  const cdp = await launch(extraArgs);
   await cdp.send("Page.enable");
   await cdp.send("Runtime.enable");
   await cdp.send("Log.enable");
@@ -259,18 +262,19 @@ if (ONLY.includes("variants")) {
 }
 
 if (ONLY.includes("nojs")) {
+  // Scripts are switched off for the whole browser (not through CDP), so the
+  // page loads exactly as a visitor without JavaScript would see it. Nothing
+  // is evaluated in the page during this run.
   await withPage(async (cdp) => {
-    await cdp.send("Emulation.setScriptExecutionDisabled", { value: true });
+    await cdp.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "light" }] });
     for (const w of [1440, 390]) {
       await setViewport(cdp, w, w > 800 ? 900 : 844);
       await navigate(cdp, BASE);
-      await scrollThrough(cdp, 60);
-      await shot(cdp, `nojs-${w}-full.png`, true);
-      const links = await cdp.send("Runtime.evaluate", { expression: "1" }).catch(() => null);
-      void links;
+      await sleep(800);
+      await shot(cdp, `nojs-${w}-full.png`, true, false);
     }
     console.log("no-JS shots done");
-  });
+  }, ["--blink-settings=scriptEnabled=false"]);
 }
 
 if (ONLY.includes("keys")) {

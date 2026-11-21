@@ -35,10 +35,12 @@ You can safely run it any number of times.
 ## Preview locally
 
 ```sh
+node tools/serve.mjs          # http://127.0.0.1:8080/, gzip on, like GitHub Pages
+# or, with Python:
 python -m http.server 8080
 ```
 
-Then open http://localhost:8080/. ES modules don't load from `file://`, so use the server.
+Open http://localhost:8080/. ES modules don't load from `file://`, so use a server. Prefer `tools/serve.mjs` when measuring speed: Python's server doesn't compress, which makes Lighthouse look worse than the real site.
 
 To check that it also works under a project path, as GitHub Pages serves it, serve the parent folder instead and open `http://localhost:8080/flow-app-web/`.
 
