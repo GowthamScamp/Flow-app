@@ -13,6 +13,19 @@ tools/qa/out/
 # Local knowledge graph.
 graphify-out/
 
+# Secrets and local environment: never committed.
+.env
+.env.*
+!.env.example
+
+# Dependencies and build output (this site has no build step).
+node_modules/
+dist/
+
+# Source maps and installers never belong in the public site.
+*.map
+*.exe
+
 # Python / OS / editor noise
 __pycache__/
 Thumbs.db

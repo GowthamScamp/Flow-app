@@ -18,6 +18,9 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const PORT = Number(process.argv[2]) || 8080;
+// 127.0.0.1 keeps the server on this machine. Pass 0.0.0.0 as the second
+// argument to share it on the local network.
+const HOST = process.argv[3] || "127.0.0.1";
 
 const TYPES = {
   ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
@@ -56,7 +59,7 @@ createServer((req, res) => {
   }
   res.writeHead(200, { ...headers, "content-length": stat.size });
   createReadStream(file).pipe(res);
-}).listen(PORT, "127.0.0.1", () => console.log(`Flow site preview: http://127.0.0.1:${PORT}/  (gzip on)`));
+}).listen(PORT, HOST, () => console.log(`Flow site preview: http://${HOST}:${PORT}/  (gzip on)`));
 
 function readFileSafe(name) {
   try { return readFileSync(join(ROOT, name)); } catch { return "Not found"; }

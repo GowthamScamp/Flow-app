@@ -856,6 +856,7 @@
 .file__meta dt { color: var(--text-soft); }
 .file__meta dd { margin: 0; overflow-wrap: anywhere; }
 .file__action { display: grid; justify-items: start; gap: var(--s-3); }
+.file__note { max-inline-size: 36ch; font-size: var(--fs-small); color: var(--text-soft); }
 
 /* Checksum, shown only once config.js has one. */
 .sha summary {

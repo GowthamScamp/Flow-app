@@ -17,20 +17,21 @@ export const SITE = {
 
   // Where the site is published, with a trailing slash. Used for the
   // canonical link, social cards and the sitemap.
-  baseUrl: "https://TODO-user.github.io/TODO-repo/",
+  baseUrl: "https://gowthamscamp.github.io/flow-app/",
 
   // The GitHub Releases page that holds the installer.
   releasesUrl: "https://github.com/GowthamScamp/Flow-app/releases",
 
-  // This link points at the v2.1.3 release. When you publish a new version,
-  // update `version` above and the version in this URL.
+  // Every Download button opens the v2.1.3 release page, where Flow-Setup.exe
+  // is listed under Assets. When you publish a new version, update `version`
+  // above and the tag in this URL.
   // Size and checksum are left out of the page until you fill them in.
   downloads: {
     windows: [
       {
         label: "Windows installer (.exe)",
         file: "Flow-Setup.exe",
-        url: "https://github.com/GowthamScamp/Flow-app/releases/download/v2.1.3/Flow-Setup.exe",
+        url: "https://github.com/GowthamScamp/Flow-app/releases/tag/v2.1.3",
         size: "TODO",
         sha256: "TODO"
       }

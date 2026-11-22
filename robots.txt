@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://TODO-user.github.io/TODO-repo/sitemap.xml
+Sitemap: https://gowthamscamp.github.io/flow-app/sitemap.xml

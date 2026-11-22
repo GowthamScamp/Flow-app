@@ -57,6 +57,11 @@ function renderFile(file, version, index, os) {
                 <p class="sha__value"><code id="${id}">${escapeHtml(file.sha256)}</code><button class="sha__copy" type="button" data-copy="${id}">${COPY_ICON}<span>Copy</span></button></p>
               </details>`;
 
+  // The SmartScreen note sits next to a real download only.
+  const note = isTodo(file.url)
+    ? ""
+    : `<p class="file__note">Windows may show a SmartScreen warning because Flow is new. Click More info, then Run anyway.</p>`;
+
   return `<li class="file">
             <div class="file__info">
               <p class="file__label">${escapeHtml(file.label)}</p>
@@ -65,7 +70,7 @@ function renderFile(file, version, index, os) {
               </dl>
             </div>
             <div class="file__action">
-              ${button}${sha}
+              ${button}${note}${sha}
             </div>
           </li>`;
 }
