@@ -17,7 +17,7 @@ export const SITE = {
 
   // Where the site is published, with a trailing slash. Used for the
   // canonical link, social cards and the sitemap.
-  baseUrl: "https://gowthamscamp.github.io/flow-app/",
+  baseUrl: "https://gowthamscamp.github.io/Flow-app/",
 
   // The GitHub Releases page that holds the installer.
   releasesUrl: "https://github.com/GowthamScamp/Flow-app/releases",

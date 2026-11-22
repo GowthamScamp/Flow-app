@@ -2,7 +2,7 @@
 
 The website for **Flow**, a local-first AI workspace for Windows.
 
-**Live site:** https://gowthamscamp.github.io/flow-app/
+**Live site:** https://gowthamscamp.github.io/Flow-app/
 
 **Download:** [Flow 2.1.3 for Windows](https://github.com/GowthamScamp/Flow-app/releases/tag/v2.1.3). Flow is free to use.
 
